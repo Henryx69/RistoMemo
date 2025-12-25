@@ -1,0 +1,3650 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<!-- Manifest PWA -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="512x512" href="salvaristo_icon512.png">
+<link rel="apple-touch-icon" href="salvaristo_icon512.png">
+<meta name="theme-color" content="#ff6666">
+
+    <!-- Privacy Policy Inline -->
+    <style>
+        .privacy-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+            z-index: 9999;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .privacy-banner.show {
+            transform: translateY(0);
+        }
+        .privacy-banner p {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .privacy-accept {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .privacy-accept:hover {
+            background: #229954;
+        }
+        .privacy-link {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 12px;
+            margin-left: 15px;
+        }
+    </style>
+
+<!-- 
+====================================
+====================================
+SVILUPPATO DA: Enrico Sarri - 2025
+VERSIONE ORIGINALE: 1.3.0
+DATA CREAZIONE: 29/07/2025
+====================================
+-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RistoMemo I tuoi ristoranti preferiti sempre a portata di mano by Enrico Sarri</title>
+    
+    <!-- CACHE BUSTING AGGRESSIVO -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="version" content="1.2.0">
+    <meta name="timestamp" content="2025-01-26-15:30">
+    
+    <style>
+        /* ========================================= */
+        /* APP VERSION 1.3.0 - FORCE UPDATE SYSTEM */
+        /* TIMESTAMP: 2025-07-29-15:30 */
+        /* ========================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-watermark {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 500;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 16px 8px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            line-height: 1.2;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .content {
+            padding: 20px;
+            min-height: 500px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select {
+            font-size: 15px;
+        }
+
+        .form-group select option {
+            font-size: 15px;
+            padding: 8px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #ff6b6b;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #4CAF50;
+        }
+
+        .checkbox-item label {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .checkbox-item.selected {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0) !important;
+            border-color: #4CAF50 !important;
+            transform: scale(1.02);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-small {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 14px;
+            margin: 5px;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c757d, #5a6268);
+        }
+
+        .restaurant-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+        }
+
+  .restaurant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    min-height: 50px;
+    gap: 10px;
+}
+
+        .restaurant-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+            margin-right: 15px;
+            line-height: 1.3;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            max-width: calc(100% - 120px);
+        }
+
+        .restaurant-rating {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+       .restaurant-location {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 8px 0;
+}
+
+
+.restaurant-location br {
+    margin-bottom: 6px;
+    display: block;
+    content: "";
+}
+
+.restaurant-location > * {
+    margin-bottom: 4px;
+}
+        }
+
+        .restaurant-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0 15px 0;
+    padding: 8px 0;
+}
+
+        .tag {
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #495057;
+        }
+
+        .restaurant-notes {
+            color: #666;
+            font-style: italic;
+            font-size: 14px;
+        }
+
+        .restaurant-actions {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: flex-end;
+            width: 75px;
+            flex-shrink: 0;
+        }
+
+        .restaurant-actions-row {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            background: rgba(0,0,0,0.1);
+            transform: scale(1.1);
+        }
+
+        .share-btn {
+            background: #25D366;
+            color: white;
+            padding: 5px 8px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .share-btn:hover {
+            background: #1eb855;
+        }
+
+        .search-filters {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .filter-row select {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .filter-row select option {
+            font-size: 14px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .no-results h3 {
+            margin-bottom: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #212529;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .backup-section {
+            background: #e8f5e8;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .backup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .backup-info {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .backup-status {
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .backup-alternative {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .backup-textarea {
+            width: 100%;
+            height: 120px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification.show {
+            opacity: 1;
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        /* ========================================= */
+        /* MODAL ANTI-DUPLICATI PERSONALIZZATO */
+        /* ========================================= */
+        
+        .duplicate-modal {
+            display: flex;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .duplicate-modal-content {
+            background: white;
+            margin: auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        .duplicate-modal-header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .duplicate-modal-body {
+            padding: 25px;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .duplicate-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .duplicate-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .duplicate-info strong {
+            color: #ff6b6b;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .duplicate-item {
+            background: white;
+            padding: 12px;
+            border-left: 3px solid #ff6b6b;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .duplicate-modal-buttons {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .duplicate-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .duplicate-btn-cancel {
+            background: #dc3545;
+            color: white;
+        }
+
+        .duplicate-btn-cancel:hover {
+            background: #c82333;
+            transform: scale(1.02);
+        }
+
+        .duplicate-btn-proceed {
+            background: #28a745;
+            color: white;
+        }
+
+        .duplicate-btn-proceed:hover {
+            background: #218838;
+            transform: scale(1.02);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ========================================= */
+        /* PULSANTE CANCELLA FORM */
+        /* ========================================= */
+        
+        .form-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-clear {
+            flex: 0.4;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-clear:hover {
+            background: #7f8c8d;
+            transform: scale(1.02);
+        }
+
+        .btn-save {
+            flex: 1;
+        }
+
+        .days-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .days-grid .checkbox-item {
+            padding: 10px 6px;
+            font-size: 13px;
+            min-height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .days-grid .checkbox-item label {
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .days-grid .checkbox-item input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ========================================= */
+        /* TERMINI MODAL - VERSIONE RESPONSIVE */
+        /* ========================================= */
+
+        .terms-modal {
+            display: flex;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .terms-modal-content {
+            background: white;
+            margin: auto;
+            padding: 0;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 500px;
+            max-height: calc(100vh - 40px);
+            min-height: 60vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50%) scale(0.8); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateY(-50%) scale(1); 
+                opacity: 1; 
+            }
+        }
+
+        .terms-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            flex-shrink: 0;
+        }
+
+        .terms-header h2 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .terms-header h3 {
+            margin: 0;
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .terms-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
+            scroll-behavior: smooth;
+        }
+
+        .terms-section {
+            margin-bottom: 18px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .terms-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .terms-section h4 {
+            color: #333;
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .terms-section ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .terms-section li {
+            margin-bottom: 6px;
+            line-height: 1.4;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .terms-footer {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .terms-footer p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+
+        .terms-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .terms-buttons {
+            padding: 15px 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 0 0 20px 20px;
+            flex-shrink: 0;
+        }
+
+        .btn-accept, .btn-decline {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 180px;
+            min-height: 44px;
+        }
+
+        .btn-accept {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+        }
+
+        .btn-accept:hover, .btn-accept:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-decline {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn-decline:hover, .btn-decline:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .app-hidden {
+            display: none !important;
+        }
+
+        /* Pulsante Torna Su */
+        #scrollToTopBtn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #scrollToTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #scrollToTopBtn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        #scrollToTopBtn:active {
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Pulsante Torna Su -->
+    <button id="scrollToTopBtn" onclick="scrollToTop()" title="Torna su">↑</button>
+    
+    <!-- Terms Modal (visibile all'apertura) -->
+    <div id="termsModal" class="terms-modal">
+        <div class="terms-modal-content">
+            <div class="terms-header">
+                <h2>📋 TERMINI DI UTILIZZO</h2>
+                <h3>RistoMemo</h3>
+            </div>
+            
+            <div class="terms-body">
+               
+
+<div class="terms-section">
+    <h4 style="color: #dc3545; font-weight: 700; margin-bottom: 15px;">⚠️ AVVISO IMPORTANTE</h4>
+    <div style="background: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+        <strong>🧪 VERSIONE BETA:</strong> Questa è una versione in fase di test pubblico. Potrebbero verificarsi bug o malfunzionamenti. Usala consapevolmente e segnala eventuali problemi.<br><br>
+        <strong>Questa è un'applicazione hobbistica gratuita sviluppata da una persona fisica senza scopo di lucro. Non è un servizio commerciale. L'utilizzo è completamente a tuo rischio. Responsabilità limitata a ZERO EURO per qualsiasi danno.</strong>
+    </div>
+</div>
+
+
+   
+              
+ <!-- BOX CELESTE -->
+            <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #0066cc; margin-bottom: 15px;">
+                <p style="margin: 0; font-weight: 600; color: #004085;">
+                    <strong>L'eventuale nullità di singole clausole non inficia la validità del resto del contratto.</strong> 
+                    In caso di controversie si applicherà l'interpretazione più favorevole alla natura gratuita e hobbistica del servizio.
+                </p>
+            </div>
+            
+            <!-- BOX GIALLO -->
+            <div style="background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                <p style="margin: 0; font-weight: 600; color: #856404;">
+                    <strong>GDPR Compliance:</strong> Nessun dato personale raccolto - tutto rimane sul tuo dispositivo. 
+                    <strong>L'utente rinuncia esplicitamente a richiedere risarcimenti</strong> di qualsiasi natura.
+                </p>
+            </div>
+  
+                <div class="terms-section">
+                    <h4>2. RESPONSABILITÀ UTENTE</h4>
+                    <ul>
+                         <li>L'utente utilizza l'app a proprio rischio per i contenuti inseriti</li>
+                         <li>Ogni recensione o commento è responsabilità esclusiva dell'utente</li>
+                         <li>Il creatore non è responsabile per recensioni o contenuti condivisi</li>
+                        <li>Backup dei propri dati a cura dell'utente</li>
+                        <li>Utilizzo consapevole e responsabile</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-section">
+                    <h4>3. LIMITAZIONE RESPONSABILITÀ</h4>
+                    <ul>
+                        <li>Non siamo responsabili per perdite di dati</li>
+                        <li>Non siamo responsabili per interruzioni del servizio</li>
+                        <li>L'utente utilizza l'app a proprio rischio</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-section">
+                    <h4>4. DATI E PRIVACY</h4>
+                    <ul>
+                        <li>Dati salvati solo localmente sul dispositivo</li>
+                        <li>Nessuna raccolta dati personali</li>
+                        <li>Nessun tracking o analitiche</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-section">
+                    <h4>5. COPYRIGHT E PROPRIETÀ INTELLETTUALE</h4>
+                    <ul>
+                        <li>App sviluppata da Enrico Sarri - Tutti i diritti riservati</li>
+                        <li>Il design, il codice e la struttura sono protetti da copyright</li>
+                        <li>È vietata la riproduzione o distribuzione non autorizzata</li>
+                    </ul>
+                </div>
+                
+                <div class="terms-footer">
+                    <p><strong>⚠️ Continuando, accetti questi termini di utilizzo.</strong></p>
+                    <p class="terms-date">Versione del: <span id="termsDate">2025-01-24</span></p>
+                </div>
+            </div>
+</body>    
+        
+            <div class="terms-buttons">
+                <button id="acceptTerms" class="btn-accept">
+                    ✅ Accetto i Termini
+                </button>
+                <button id="declineTerms" class="btn-decline">
+                    ❌ Rifiuto
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- App Container (nascosta inizialmente) -->
+    <div class="container app-hidden" id="mainApp">
+
+      <div class="header">
+    <!-- Watermark sempre visibile -->
+    <div class="header-watermark">
+        <span>⚡ by E.Sarri</span>
+    </div>
+    
+    <h1>🍽️ RistoMemo</h1>
+    <p style="font-size: 18px;">I tuoi ristoranti preferiti<br>sempre a portata di mano</p>
+    <p style="margin-top: 10px; font-size: 12px; opacity: 0.9; font-weight: 500;">
+        Versione Beta • 100% Gratuita
+    </p>
+</div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('add')">Aggiungi</button>
+            <button class="tab" onclick="showTab('search')">Cerca</button>
+            <button class="tab" onclick="showTab('backup')">Backup</button>
+            <button class="tab" onclick="showTab('guida')">Guida</button>
+        </div>
+
+        <div class="content">
+            <!-- TAB AGGIUNGI RISTORANTE -->
+            <div id="addTab" class="tab-content">
+                <form id="restaurantForm">
+                    <div class="form-group">
+                       <label for="name">
+    <strong>Nome Ristorante</strong>
+    <span style="font-weight: normal; font-size: 13px; color: #666;"><br>
+        (per cercare con Google metti la virgola e la città)
+    </span>
+</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+<div style="margin: 8px 0 18px 0;">
+    <button type="button" class="btn btn-small" id="googleSearchBtn" onclick="apriRicercaGoogle()">
+        🔍 Cerca su Google
+    </button>
+</div>
+
+
+                    <div class="form-group">
+                        <label for="regione">Regione *</label>
+                        <select id="regione" required>
+                            <option value="">Seleziona regione...</option>
+                            <option value="Abruzzo">Abruzzo</option>
+                            <option value="Basilicata">Basilicata</option>
+                            <option value="Calabria">Calabria</option>
+                            <option value="Campania">Campania</option>
+                            <option value="Emilia-Romagna">Emilia-Romagna</option>
+                            <option value="Friuli-Venezia Giulia">Friuli-Venezia Giulia</option>
+                            <option value="Lazio">Lazio</option>
+                            <option value="Liguria">Liguria</option>
+                            <option value="Lombardia">Lombardia</option>
+                            <option value="Marche">Marche</option>
+                            <option value="Molise">Molise</option>
+                            <option value="Piemonte">Piemonte</option>
+                            <option value="Puglia">Puglia</option>
+                            <option value="Sardegna">Sardegna</option>
+                            <option value="Sicilia">Sicilia</option>
+                            <option value="Toscana">Toscana</option>
+                            <option value="Trentino-Alto Adige">Trentino-Alto Adige</option>
+                            <option value="Umbria">Umbria</option>
+                            <option value="Valle d'Aosta">Valle d'Aosta</option>
+                            <option value="Veneto">Veneto</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="citta">Città</label>
+                        <input type="text" id="citta">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="indirizzo">Indirizzo (opzionale)</label>
+                        <input type="text" id="indirizzo" placeholder="Via, numero civico...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">Telefono</label>
+                        <input type="tel" id="telefono" placeholder="+39 123 456 7890">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rating">Valutazione (1-5 stelle)</label>
+                        <select id="rating">
+                            <option value="">Seleziona...</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 stelle)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 stelle)</option>
+                            <option value="3">⭐⭐⭐ (3 stelle)</option>
+                            <option value="2">⭐⭐ (2 stelle)</option>
+                            <option value="1">⭐ (1 stella)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ambiente e Posizione</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_mare" value="Sul Mare">
+                                <label for="ambiente_mare">🌊 Sul Mare</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_lago" value="Sul Lago">
+                                <label for="ambiente_lago">🏞️ Sul Lago</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_montagna" value="In Montagna">
+                                <label for="ambiente_montagna">🏔️ In Montagna</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_campagna" value="In Campagna">
+                                <label for="ambiente_campagna">🌾 In Campagna</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_cittaurbana" value="Città Urbana">
+                                <label for="ambiente_cittaurbana">🏙️ Città Urbana</label>
+                            </div>
+  				<div class="checkbox-item">
+                                <input type="checkbox" id="ambiente_paesino" value="Paesino">
+                                <label for="Paesino">🏙️ Paesino</label>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipologia Locale</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_agriturismo" value="Agriturismo">
+                                <label for="tipo_agriturismo">🚜 Agriturismo</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_rustico" value="Rustico">
+                                <label for="tipo_rustico">🏚️ Rustico</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_caminetto" value="Caminetto a Legna">
+                                <label for="tipo_caminetto">🔥 Caminetto a Legna</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_gestione_caminetto" value="Gestione del Caminetto">
+                                <label for="tipo_gestione_caminetto">🪵 Gestione del Caminetto</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_elegante" value="Elegante">
+                                <label for="tipo_elegante">✨ Elegante</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="tipo_moderno" value="Moderno">
+                                <label for="tipo_moderno">🏙️ Moderno</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Servizi e Comodità</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="servizio_parcheggio" value="Parcheggio Interno">
+                                <label for="servizio_parcheggio">🚗 Parcheggio Interno</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="servizio_accessibile" value="Accessibile ai Disabili">
+                                <label for="servizio_accessibile">♿ Accessibile ai Disabili</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="servizio_petfriendly" value="Pet-Friendly">
+                                <label for="servizio_petfriendly">🐕 Pet-Friendly</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="servizio_nonfumatori" value="Non Fumatori">
+                                <label for="servizio_nonfumatori">🚭 Non Fumatori</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cucina">Tipo di Cucina</label>
+                        <select id="cucina">
+                            <option value="">Seleziona...</option>
+                            <option value="Carne">🥩 Carne</option>
+                            <option value="Pesce">🐟 Pesce</option>
+                            <option value="Pizza">🍕 Pizza</option>
+                            <option value="Italiana">🇮🇹 Italiana</option>
+                            <option value="Straniera">🌍 Straniera/Internazionale</option>
+                            <option value="Mista">🍽️ Mista</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="source">Fonte</label>
+                        <select id="source">
+                            <option value="">Seleziona...</option>
+                            <option value="Provato Personalmente">🍴 Provato Personalmente</option>
+                            <option value="TripAdvisor">📱 Consigliato da TripAdvisor</option>
+                            <option value="Consiglio di Amici">👥 Consiglio di Amici</option>
+                            <option value="Altro">📝 Altro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Note Personali</label>
+                        <textarea id="notes" rows="3" placeholder="Aggiungi le tue impressioni, piatti consigliati, ecc..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Giorni di Apertura</label>
+                        <div class="checkbox-group days-grid">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_lunedi" value="Lunedì">
+                                <label for="giorno_lunedi">📅 Lun</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_martedi" value="Martedì">
+                                <label for="giorno_martedi">📅 Mar</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_mercoledi" value="Mercoledì">
+                                <label for="giorno_mercoledi">📅 Mer</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_giovedi" value="Giovedì">
+                                <label for="giorno_giovedi">📅 Gio</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_venerdi" value="Venerdì">
+                                <label for="giorno_venerdi">📅 Ven</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_sabato" value="Sabato">
+                                <label for="giorno_sabato">📅 Sab</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="giorno_domenica" value="Domenica">
+                                <label for="giorno_domenica">📅 Dom</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="orario">Orari di Apertura</label>
+                        <input type="text" id="orario" placeholder="es: 12:00-15:00, 19:00-23:00">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="chiusure">Chiusure Speciali</label>
+                        <textarea id="chiusure" rows="2" placeholder="es: Chiuso ad Agosto, Chiuso 25 Dic - 6 Gen, ecc..."></textarea>
+                    </div>
+
+                   <div class="form-buttons">
+                        <button type="button" class="btn-clear" onclick="clearForm()">🗑️ Cancella</button>
+                        <button type="submit" class="btn btn-save" id="submitBtn">Aggiungi Ristorante</button>
+                    </div>
+                    <!-- Disclaimer -->
+                    <div style="font-size: 12px; color: #666; margin-top: 20px; background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #ff6b6b;">
+                        <h4 style="color: #ff6b6b; margin-bottom: 10px;">⚠️ Informazioni Importanti</h4>
+                        
+                        <p style="margin-bottom: 8px;"><strong>🧪 App in Beta:</strong> Questa è una versione di test. Potrebbero esserci piccoli bug.</p>
+                        
+                        <p style="margin-bottom: 8px;"><strong>💾 I Tuoi Dati:</strong> Tutto è salvato solo sul tuo dispositivo. <strong>Fai backup regolari!</strong> Se perdi il telefono o cancelli i dati del browser, perdi tutto.</p>
+                        
+                        <p style="margin-bottom: 8px;"><strong>🆓 Progetto Hobbistico:</strong> È un progetto personale gratuito, non un servizio commerciale. Fai il backup dei tuoi ristoranti preferiti!</p>
+                        
+                        <p style="margin: 0;"><strong>📧 Problemi?</strong> <a href="mailto:help.enricosarri@gmail.com" style="color: #ff6b6b; text-decoration: none; font-weight: 600;">Scrivimi qui</a></p>
+                    </div>
+
+                    <!-- Copyright Footer -->
+                    <div style="font-size: 11px; color: #888; margin-top: 15px; text-align: center; padding-top: 15px; border-top: 1px solid #eee;">
+                        © 2025 Enrico Sarri - Tutti i diritti riservati<br>
+                        <em>RistoMemo v1.3.0</em>
+                    </div>
+<!-- Reminder Beta/Gratuita -->
+<div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); border-top: 2px solid #e9ecef; border-radius: 8px; padding: 12px 15px; margin-top: 20px; text-align: center;">
+    <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;">
+        🧪 <strong>App Beta</strong> • 💯 <strong>Sempre Gratuita</strong>
+    </p>
+    <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
+        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+    </p>
+</div>
+                </form>
+            </div>
+
+            <!-- TAB CERCA RISTORANTI -->
+            <div id="searchTab" class="tab-content hidden">
+                <!-- Contatore ristoranti salvati - PULITO SENZA BORDI -->
+                <div style="text-align: center; padding: 10px 15px; margin-bottom: 12px; background: #f8f9fa; border-radius: 8px;">
+                    <span style="color: #666; font-size: 15px; font-weight: 600;">
+                        <span id="totalRestaurantsCount" style="color: #ff6b6b; font-weight: 700; font-size: 16px;">0</span> ristoranti salvati
+                    </span>
+                </div>
+                
+                <div class="search-filters">
+                    <!-- Barra ricerca per nome -->
+                    <div class="filter-row" style="margin-bottom: 10px;">
+                        <input type="text" id="searchByName" placeholder="🔍 Cerca per nome ristorante..." 
+                               style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 15px;">
+                    </div>
+                    
+                    <!-- Filtri principali molto compatti -->
+                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                        <select id="filterRegione" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">📍 Tutte le regioni</option>
+                            <option value="Abruzzo">Abruzzo</option>
+                            <option value="Basilicata">Basilicata</option>
+                            <option value="Calabria">Calabria</option>
+                            <option value="Campania">Campania</option>
+                            <option value="Emilia-Romagna">Emilia-Romagna</option>
+                            <option value="Friuli-Venezia Giulia">Friuli-Venezia Giulia</option>
+                            <option value="Lazio">Lazio</option>
+                            <option value="Liguria">Liguria</option>
+                            <option value="Lombardia">Lombardia</option>
+                            <option value="Marche">Marche</option>
+                            <option value="Molise">Molise</option>
+                            <option value="Piemonte">Piemonte</option>
+                            <option value="Puglia">Puglia</option>
+                            <option value="Sardegna">Sardegna</option>
+                            <option value="Sicilia">Sicilia</option>
+                            <option value="Toscana">Toscana</option>
+                            <option value="Trentino-Alto Adige">Trentino-Alto Adige</option>
+                            <option value="Umbria">Umbria</option>
+                            <option value="Valle d'Aosta">Valle d'Aosta</option>
+                            <option value="Veneto">Veneto</option>
+                        </select>
+                        
+                        <select id="filterRating" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">⭐ Tutte le valutazioni</option>
+                            <option value="5">⭐⭐⭐⭐⭐</option>
+                            <option value="4">⭐⭐⭐⭐</option>
+                            <option value="3">⭐⭐⭐</option>
+                            <option value="2">⭐⭐</option>
+                            <option value="1">⭐</option>
+                        </select>
+                        
+                        <select id="filterAmbiente" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">🌍 Tutti gli ambienti</option>
+                            <option value="Sul Mare">🌊 Sul Mare</option>
+                            <option value="Sul Lago">🏞️ Sul Lago</option>
+                            <option value="In Montagna">🏔️ In Montagna</option>
+                            <option value="In Campagna">🌾 In Campagna</option>
+                            <option value="Città Urbana">🏙️ Città Urbana</option>
+			     <option value="Paesino">🏙️ Paesino</option>
+                        </select>
+                        
+                        <select id="filterTipologia" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">🏪 Tutte le tipologie</option>
+                            <option value="Agriturismo">🚜 Agriturismo</option>
+                            <option value="Rustico">🏚️ Rustico</option>
+                            <option value="Caminetto a Legna">🔥 Caminetto a Legna</option>
+                            <option value="Gestione del Caminetto">🪵 Gestione del Caminetto</option>
+                            <option value="Elegante">✨ Elegante</option>
+                            <option value="Moderno">🏙️ Moderno</option>
+                        </select>
+                        
+                        <select id="filterGiorno" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">📅 Tutti i giorni</option>
+                            <option value="Lunedì">📅 Aperti Lunedì</option>
+                            <option value="Martedì">📅 Aperti Martedì</option>
+                            <option value="Mercoledì">📅 Aperti Mercoledì</option>
+                            <option value="Giovedì">📅 Aperti Giovedì</option>
+                            <option value="Venerdì">📅 Aperti Venerdì</option>
+                            <option value="Sabato">📅 Aperti Sabato</option>
+                            <option value="Domenica">📅 Aperti Domenica</option>
+                        </select>
+                        
+                        <select id="filterServizi" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">🛎️ Tutti i servizi</option>
+                            <option value="Parcheggio Interno">🚗 Parcheggio Interno</option>
+                            <option value="Accessibile ai Disabili">♿ Accessibile ai Disabili</option>
+                            <option value="Pet-Friendly">🐕 Pet-Friendly</option>
+                            <option value="Non Fumatori">🚭 Non Fumatori</option>
+                        </select>
+                        
+                        <select id="filterCucina" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">🍽️ Tipo di cucina</option>
+                            <option value="Carne">🥩 Carne</option>
+                            <option value="Pesce">🐟 Pesce</option>
+                            <option value="Pizza">🍕 Pizza</option>
+                            <option value="Italiana">🇮🇹 Italiana</option>
+                            <option value="Straniera">🌍 Straniera/Internazionale</option>
+                            <option value="Mista">🍽️ Mista</option>
+                        </select>
+                        
+                        <select id="filterOggi" style="width: 100%; padding: 8px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 14px;">
+                            <option value="">🕐 Apertura scegli tra 3 opzioni </option>
+                            <option value="oggi">📍 Aperti oggi</option>
+                            <option value="weekend">🎉 Aperti nel weekend</option>
+                            <option value="festivi">🎊 Aperti nei festivi</option>
+                        </select>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 8px;">
+                        <button id="btnCancellaFiltri" class="btn btn-small" onclick="clearAllFilters()">
+                            🗑️ Cancella filtri
+                        </button>
+                    </div>
+                </div>
+
+                <div id="restaurantsList">
+                    <div class="no-results">
+                        <h3>Nessun ristorante trovato</h3>
+                        <p>Inizia aggiungendo i tuoi ristoranti preferiti!</p>
+                    </div>
+                </div>
+                
+                <!-- Copyright nella sezione CERCA -->
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center; font-size: 11px; color: #666;">
+    <p style="margin: 0;">© 2025 <strong>Enrico Sarri</strong> - Tutti i diritti riservati</p>
+    <p style="margin: 3px 0 0 0; font-style: italic;">RistoMemo v1.3.0</p>
+    <p style="margin: 5px 0 0 0;">
+        <a href="https://ristomemobeta.netlify.app/privacy.html" target="_blank" style="color: #ff6b6b; text-decoration: none; font-size: 10px;">
+            🔒 Privacy Policy
+        </a>
+    </p>
+<p style="margin: 5px 0 0 0; font-size: 10px;">
+    📧 Supporto: <a href="mailto:help.enricosarri@gmail.com" style="color: #667eea; text-decoration: none;">help.enricosarri@gmail.com</a>
+</p>
+</div>
+<!-- Reminder Beta/Gratuita -->
+<div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); border-top: 2px solid #e9ecef; border-radius: 8px; padding: 12px 15px; margin-top: 20px; text-align: center;">
+    <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;">
+        🧪 <strong>App Beta</strong> • 💯 <strong>Sempre Gratuita</strong>
+    </p>
+    <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
+        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+    </p>
+</div>
+            </div>
+
+            <!-- TAB BACKUP -->
+            <div id="backupTab" class="tab-content hidden">
+                <!-- BACKUP MIGLIORATO -->
+                <div class="backup-section">
+                    <div class="backup-status" id="backupStatus">
+                        💾 Sistema di Backup Attivo
+                    </div>
+                    <p style="margin-bottom: 15px;">Proteggi i tuoi dati con backup automatico via email</p>
+                    
+                    <div class="backup-buttons">
+                        <button class="btn btn-small btn-success" onclick="sendBackupEmail()">
+                            📧 Invia Backup via Email
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="createBackup()">
+                            📥 Download Backup (PC)
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="document.getElementById('fileInput').click()">
+                            📤 Carica Backup da File
+                        </button>
+                    </div>
+                    
+                    <div class="backup-info" id="backupInfo">
+                        Ultimo backup: Mai creato
+                    </div>
+                </div>
+
+                <!-- BACKUP ALTERNATIVO PER iPHONE -->
+                <div class="backup-alternative">
+                    <h4 style="color: #856404; margin-bottom: 10px;">📱 Backup Manuale (iPhone/iPad)</h4>
+                    <p style="margin-bottom: 10px; font-size: 13px;">Solo se il backup email non funziona:</p>
+                    
+                    <button class="btn btn-small" onclick="showBackupText()" style="background: #ffc107; color: #212529; margin-bottom: 10px;">
+                        📋 Mostra Testo Backup
+                    </button>
+                    
+                    <textarea id="backupTextarea" class="backup-textarea" placeholder="Il testo del backup apparirà qui. Copialo e salvalo in Note o in un file di testo." style="display: none;"></textarea>
+                    
+                    <div style="margin-top: 10px;">
+                        <button class="btn btn-small" onclick="loadFromText()" style="background: #17a2b8; color: white;">
+                            📥 Carica da Testo
+                        </button>
+                    </div>
+                    
+                    <div style="font-size: 12px; color: #856404; margin-top: 10px;">
+                        <strong>Come usare:</strong><br>
+                        1. Clicca "Mostra Testo Backup"<br>
+                        2. Copia tutto il testo<br>
+                        3. Salvalo nell'app Note<br>
+                        4. Per ripristinare: copia il testo e clicca "Carica da Testo"
+                    </div>
+                </div>
+
+                <!-- GUIDA DETTAGLIATA BACKUP -->
+                <div style="background: #e7f3ff; border: 2px solid #0066cc; border-radius: 10px; padding: 15px; margin-top: 15px;">
+                    <h4 style="color: #0066cc; margin-bottom: 15px;">📚 GUIDA COMPLETA BACKUP</h4>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <h5 style="color: #333; margin-bottom: 8px;">🟢 METODO 1: Backup via Email (CONSIGLIATO)</h5>
+                        <ol style="font-size: 13px; line-height: 1.4; margin-bottom: 10px; padding-left: 18px;">
+                            <li><strong>Clicca "📧 Invia Backup via Email"</strong></li>
+                            <li><strong>Si aprirà l'app Email</strong> del tuo telefono/PC</li>
+                            <li><strong>Metti il TUO indirizzo email</strong> nel campo "A:"</li>
+                            <li><strong>Invia l'email a te stesso</strong></li>
+                            <li><strong>Controlla la tua casella email</strong> - troverai l'email con il backup</li>
+                            <li><strong>Salva l'email</strong> in una cartella importante</li>
+                        </ol>
+                        <div style="background: #d4edda; padding: 8px; border-radius: 5px; font-size: 12px;">
+                            ✅ <strong>Vantaggi:</strong> Semplice, funziona sempre, backup sicuro nella tua email
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <h5 style="color: #333; margin-bottom: 8px;">🟡 METODO 2: Per ripristinare da Email</h5>
+                        <ol style="font-size: 13px; line-height: 1.4; margin-bottom: 10px; padding-left: 18px;">
+                            <li><strong>Apri l'email</strong> con il backup che ti sei mandato</li>
+                            <li><strong>Scarica il file allegato</strong> (si chiama "ristoranti_backup_[data].json")</li>
+                            <li><strong>Torna all'app</strong> nel tab "Backup"</li>
+                            <li><strong>Clicca "📤 Carica Backup da File"</strong></li>
+                            <li><strong>Seleziona il file</strong> che hai scaricato dall'email</li>
+                            <li><strong>Conferma il ripristino</strong> quando richiesto</li>
+                        </ol>
+                        <div style="background: #fff3cd; padding: 8px; border-radius: 5px; font-size: 12px;">
+                            ⚠️ <strong>Su iPhone:</strong> Il file potrebbe finire in "File" → "Download"
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <h5 style="color: #333; margin-bottom: 8px;">🔴 METODO 3: Backup Manuale (solo se email non funziona)</h5>
+                        <ol style="font-size: 13px; line-height: 1.4; margin-bottom: 10px; padding-left: 18px;">
+                            <li><strong>Scorri in alto</strong> alla sezione "Backup Manuale"</li>
+                            <li><strong>Clicca "📋 Mostra Testo Backup"</strong></li>
+                            <li><strong>Seleziona TUTTO il testo</strong> che appare (tieni premuto → "Seleziona tutto")</li>
+                            <li><strong>Copia il testo</strong> (tieni premuto → "Copia")</li>
+                            <li><strong>Apri l'app "Note"</strong> del tuo telefono</li>
+                            <li><strong>Crea una nuova nota</strong> chiamata "Backup Ristoranti [data]"</li>
+                            <li><strong>Incolla tutto il testo</strong> nella nota</li>
+                            <li><strong>Salva la nota</strong></li>
+                        </ol>
+                    </div>
+
+                    <div style="margin-bottom: 15px;">
+                        <h5 style="color: #333; margin-bottom: 8px;">🔄 Per ripristinare da backup manuale:</h5>
+                        <ol style="font-size: 13px; line-height: 1.4; margin-bottom: 10px; padding-left: 18px;">
+                            <li><strong>Apri l'app "Note"</strong> e trova la nota con il backup</li>
+                            <li><strong>Seleziona TUTTO il testo</strong> nella nota</li>
+                            <li><strong>Copia il testo</strong></li>
+                            <li><strong>Torna all'app</strong> nel tab "Backup"</li>
+                            <li><strong>Nella sezione "Backup Manuale"</strong> incolla il testo nella casella grande</li>
+                            <li><strong>Clicca "📥 Carica da Testo"</strong></li>
+                        </ol>
+                    </div>
+
+                    <div style="background: #f8d7da; padding: 10px; border-radius: 5px; font-size: 12px;">
+                        <strong>🚨 IMPORTANTE:</strong><br>
+                        • Fai backup REGOLARMENTE (almeno una volta al mese)<br>
+                        • Prova il ripristino almeno una volta per essere sicuro<br>
+                        • Tieni sempre una copia del backup in luogo sicuro<br>
+                        • Se cambi telefono, fai backup PRIMA di cancellare l'app
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
+                    <h3 style="margin-bottom: 10px;">📊 Statistiche</h3>
+                    <p><strong>Ristoranti salvati:</strong> <span id="totalRestaurants">0</span></p>
+                    <p><strong>Regioni coperte:</strong> <span id="totalRegions">0</span></p>
+                    <p><strong>Media valutazioni:</strong> <span id="averageRating">-</span></p>
+                </div>
+                
+                <!-- Copyright Info -->
+<!-- Reminder Beta/Gratuita -->
+<div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); border-top: 2px solid #e9ecef; border-radius: 8px; padding: 12px 15px; margin-top: 20px; text-align: center;">
+    <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;">
+        🧪 <strong>App Beta</strong> • 💯 <strong>Sempre Gratuita</strong>
+    </p>
+    <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
+        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+    </p>
+</div>
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center; font-size: 11px; color: #666;">
+                    <p style="margin: 0;">© 2025 <strong>Enrico Sarri</strong> - Tutti i diritti riservati</p>
+                    <p style="margin: 3px 0 0 0; font-style: italic;">RistoMemo v1.3.0</p>
+                </div>
+            </div>
+
+            <!-- TAB GUIDA (CONTENUTO DELLA PARTE B) -->
+            <div id="guidaTab" class="tab-content hidden">
+                <h2 style="color: #ff6b6b; margin-bottom: 20px; text-align: center;">📖 Come Usare l'App</h2>
+<!-- Box Informazioni Beta e Gratuità -->
+    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px solid #667eea; border-radius: 15px; padding: 20px; margin-bottom: 25px;">
+        <h3 style="color: #667eea; margin-bottom: 15px; text-align: center; font-size: 18px;">ℹ️ Informazioni Importanti</h3>
+        
+        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dee2e6;">
+            <h4 style="color: #ff9800; margin-bottom: 8px; font-size: 15px;">🧪 VERSIONE BETA</h4>
+            <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+                Stai testando una versione in fase di sviluppo. L'app funziona completamente, 
+                ma stiamo ancora raccogliendo feedback per migliorarla.
+            </p>
+            <p style="margin: 8px 0 0 0; color: #555; font-size: 13px;">
+                <strong>Hai trovato un bug o hai suggerimenti?</strong><br>
+                <a href="mailto:help.enricosarri@gmail.com?subject=Bug/Suggerimento RistoMemo" style="color: #667eea; text-decoration: none; font-weight: 600;">📧 Scrivimi qui</a>
+            </p>
+        </div>
+        
+        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dee2e6;">
+            <h4 style="color: #28a745; margin-bottom: 8px; font-size: 15px;">💯 SEMPRE GRATUITA</h4>
+            <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.6;">
+                RistoMemo è e rimarrà <strong>sempre 100% gratuita</strong>. 
+                Nessun abbonamento, nessuna versione premium, nessun costo nascosto. Mai.
+            </p>
+        </div>
+        
+        <div>
+            <h4 style="color: #2196f3; margin-bottom: 8px; font-size: 15px;">💝 Supporto Volontario (Facoltativo)</h4>
+            <p style="margin: 0 0 12px 0; color: #555; font-size: 14px; line-height: 1.6;">
+                L'app funziona identicamente per tutti. Se vuoi sostenere lo sviluppo, 
+                puoi fare una donazione volontaria:
+            </p>
+            <div style="text-align: center;">
+              <div style="text-align: center; background: #f8f9fa; padding: 15px; border-radius: 10px;">
+    <p style="margin: 0 0 8px 0; color: #555; font-size: 14px;">
+        <strong>💳 Supporta tramite PayPal:</strong>
+    </p>
+    <p style="margin: 0; color: #0070ba; font-size: 15px; font-weight: 600;">
+        📧 <a href="mailto:enricosarri69@gmail.com" style="color: #0070ba; text-decoration: none;">enricosarri69@gmail.com</a>
+    </p>
+    <p style="margin: 8px 0 0 0; color: #999; font-size: 12px; font-style: italic;">
+        (Invia tramite la tua app PayPal)
+    </p>
+</div>                   
+                 
+            </div>
+            <p style="margin: 10px 0 0 0; color: #999; font-size: 12px; text-align: center; font-style: italic;">
+                Totalmente facoltativo • Nessun vantaggio extra
+            </p>
+        </div>
+    </div>
+                
+                <!-- Backup -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="color: #ff6b6b; margin-bottom: 15px;">💾 Backup dei Dati</h3>
+                    
+                    <h4 style="color: #333; margin-bottom: 10px;">Come fare backup:</h4>
+                    <ol style="margin-bottom: 15px; padding-left: 20px;">
+                        <li>Vai al tab "Backup"</li>
+                        <li>Clicca su "📥 Salva Backup"</li>
+                        <li>Il file JSON verrà scaricato</li>
+                        <li>Conserva il file in luogo sicuro</li>
+                    </ol>
+                    
+                    <h4 style="color: #333; margin-bottom: 10px;">📧 METODO PRINCIPALE: Backup via Email</h4>
+                    <ol style="margin-bottom: 15px; padding-left: 20px;">
+                        <li><strong>Vai al tab "Backup"</strong></li>
+                        <li><strong>Clicca "📧 Invia Backup via Email"</strong></li>
+                        <li><strong>Si aprirà l'app Email</strong> - metti il TUO indirizzo nel campo "A:"</li>
+                        <li><strong>Invia l'email a te stesso</strong></li>
+                        <li><strong>Salva l'email</strong> ricevuta per il futuro</li>
+                    </ol>
+                    
+                    <h4 style="color: #333; margin-bottom: 10px;">📥 Per ripristinare da Email:</h4>
+                    <ol style="margin-bottom: 15px; padding-left: 20px;">
+                        <li><strong>Apri l'email</strong> con il backup</li>
+                        <li><strong>Scarica il file allegato</strong> (.json)</li>
+                        <li><strong>Vai al tab "Backup"</strong> nell'app</li>
+                        <li><strong>Clicca "📤 Carica Backup da File"</strong></li>
+                        <li><strong>Seleziona il file</strong> scaricato</li>
+                    </ol>
+                    
+                    <div style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; border-radius: 5px;">
+                        <strong>⚠️ Importante:</strong> Fai backup regolari!
+                    </div>
+                </div>
+
+                <!-- Installazione -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="color: #ff6b6b; margin-bottom: 15px;">📱 Installazione Offline</h3>
+                    
+                    <h4 style="color: #333; margin-bottom: 10px;">Su iPhone/iPad:</h4>
+                    <ol style="margin-bottom: 15px; padding-left: 20px;">
+                        <li>Apri in Safari</li>
+                        <li>Tocca "Condividi" 📤</li>
+                        <li>Seleziona "Aggiungi alla schermata Home"</li>
+                        <li>Conferma installazione</li>
+                    </ol>
+                    
+                    <div style="background: #d1ecf1; border: 1px solid #17a2b8; padding: 10px; border-radius: 5px;">
+                        <strong>✅ Vantaggi:</strong> Accesso rapido, funziona offline.
+                    </div>
+                </div>
+
+                               <!-- Raccomandazioni -->
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 15px;">
+                    <h3 style="margin-bottom: 15px;">🎯 Raccomandazioni</h3>
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <div>✅ <strong>Installa l'app</strong></div>
+                        <div>✅ <strong>Fai backup regolari</strong></div>
+                        <div>✅ <strong>Condividi i tuoi preferiti</strong></div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.2); border-radius: 5px; padding: 10px;">
+                        <strong>🍽️ Buon appetito!</strong>
+                    </div>
+                </div>
+                
+               <!-- Privacy Policy -->
+                <div style="background: white; border-radius: 10px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <h3 style="color: #ff6b6b; margin-bottom: 15px;">🔒 Privacy Policy</h3>
+                    <p style="font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Dati Personali:</strong> Questa app non raccoglie, memorizza o trasmette alcun dato personale.
+                    </p>
+                    <p style="font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Cookie:</strong> Non utilizziamo cookie di tracciamento o analitici.
+                    </p>
+                    <p style="font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
+                        <strong>Archiviazione:</strong> Tutti i dati rimangono sul tuo dispositivo (localStorage).
+                    </p>
+                    <p style="font-size: 14px; line-height: 1.5;">
+  <strong>Responsabile:</strong> Enrico Sarri (<a href="mailto:help.enricosarri@gmail.com" style="color: #667eea; text-decoration: none;">help.enricosarri@gmail.com</a>)
+
+
+<div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+    <a href="#" onclick="showTermsModal(); return false;" 
+       style="background: #667eea; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; display: block; margin: 0 auto 15px auto; max-width: 200px;">
+        📋 Termini di Utilizzo
+    </a>
+    <a href="https://ristomemobeta.netlify.app/privacy.html" 
+       target="_blank" 
+       style="background: #ff6b6b; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none; font-weight: 600; display: block; margin: 0 auto; max-width: 200px;">
+        🔒 Privacy Policy
+    </a>
+</div>
+                </div>
+
+
+<!-- Reminder Beta/Gratuita -->
+<div style="background: linear-gradient(135deg, #f8f9fa, #ffffff); border-top: 2px solid #e9ecef; border-radius: 8px; padding: 12px 15px; margin-top: 20px; text-align: center;">
+    <p style="margin: 0; font-size: 12px; color: #666; line-height: 1.5;">
+        🧪 <strong>App Beta</strong> • 💯 <strong>Sempre Gratuita</strong>
+    </p>
+    <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
+        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+    </p>
+</div>
+
+                <!-- Copyright -->
+                <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; text-align: center; font-size: 11px; color: #666;">
+                    <p style="margin: 0;">© 2025 <strong>Enrico Sarri</strong> - Tutti i diritti riservati</p>
+                    <p style="margin: 3px 0 0 0; font-style: italic;">RistoMemo v1.3.0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File input nascosto per backup -->
+    <input type="file" id="fileInput" class="file-input" accept=".json" onchange="loadBackup(event)">
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // ===============================
+        // SISTEMA CACHE BUSTING AGGRESSIVO
+        // ===============================
+        
+
+// ===============================
+// PROTEZIONI ANTI-COPIA LEGGERE  
+// ===============================
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) {
+        e.preventDefault();
+    }
+});
+document.addEventListener('selectstart', function(e) {
+    if (!e.target.matches('input, textarea, select')) {
+        e.preventDefault();
+    }
+});
+
+
+        const APP_VERSION = '1.2.0';
+        const APP_TIMESTAMP = '2025-01-26-15:30';
+        const FORCE_UPDATE_KEY = 'guidaRistoranti_ForceUpdate';
+        
+        // Sistema di force refresh più aggressivo
+        function forceAppRefresh() {
+            console.log('🔄 Forzando aggiornamento app...');
+            
+            const lastVersion = localStorage.getItem('appVersion');
+            const lastTimestamp = localStorage.getItem('appTimestamp');
+            
+            // Se versione o timestamp diverso = forza refresh
+            if (lastVersion !== APP_VERSION || lastTimestamp !== APP_TIMESTAMP) {
+                console.log('📱 Nuova versione rilevata! Forzando refresh...');
+                
+                // Pulisci tutta la cache localStorage dell'app
+                Object.keys(localStorage).forEach(key => {
+                    if (key.startsWith('guidaRistoranti_') || key === 'appVersion' || key === 'appTimestamp') {
+                        localStorage.removeItem(key);
+                    }
+                });
+                
+                // Salva nuova versione
+                localStorage.setItem('appVersion', APP_VERSION);
+                localStorage.setItem('appTimestamp', APP_TIMESTAMP);
+                
+                // Mostra notifica aggiornamento
+                setTimeout(() => {
+                    showNotification(`🚀 App aggiornata alla versione ${APP_VERSION}! Nuova sezione SERVIZI disponibile!`, 'success');
+                }, 1000);
+                
+                return true; // Aggiornamento effettuato
+            }
+            
+            return false; // Nessun aggiornamento necessario
+        }
+        
+        // Forza ricarica pagina se necessario
+        function checkForceReload() {
+            const forceReload = localStorage.getItem(FORCE_UPDATE_KEY);
+            if (forceReload === 'true') {
+                localStorage.removeItem(FORCE_UPDATE_KEY);
+                console.log('🔄 Ricarica forzata in corso...');
+                window.location.reload(true); // Hard reload
+                return;
+            }
+        }
+        
+        // Verifica all'avvio
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Avvio app versione:', APP_VERSION, 'timestamp:', APP_TIMESTAMP);
+            
+            // Prima controlla se serve ricarica forzata
+            checkForceReload();
+            
+            // Poi verifica versioni
+            const updated = forceAppRefresh();
+            
+            if (updated) {
+                console.log('✅ App aggiornata con successo!');
+            }
+            
+            // Inizializza app
+            initTermsModal();
+        });
+        let restaurants = [];
+        let editingId = null;
+
+        // ===============================
+        // GESTIONE TERMINI DI UTILIZZO
+        // ===============================
+        
+        function initTermsModal() {
+            console.log('🔐 Inizializzo controllo termini...');
+            
+            try {
+                // Controllo multiplo per essere sicuri
+                const termsAccepted = localStorage.getItem('termsAccepted');
+                const termsAcceptedAlt = localStorage.getItem('guidaRistorantiTermsOK');
+                const termsVersion = '2025-01-24';
+                
+                console.log('📋 Controlli termini:');
+                console.log('  - termsAccepted:', termsAccepted);
+                console.log('  - termsAcceptedAlt:', termsAcceptedAlt);
+                console.log('  - versione richiesta:', termsVersion);
+                
+                // Doppio controllo per Firefox
+                if (termsAccepted === termsVersion || termsAcceptedAlt === 'true') {
+                    console.log('✅ Termini già accettati, mostro app direttamente');
+                    // Forza la visualizzazione dell'app
+                    document.getElementById('termsModal').style.display = 'none';
+                    showMainApp();
+                    setTimeout(() => {
+                        initApp();
+                    }, 50);
+                } else {
+                    console.log('⚠️ Termini non accettati, mostro modal');
+                    showTermsModal();
+                }
+            } catch (error) {
+                console.error('❌ Errore controllo termini:', error);
+                // In caso di errore, forza l'accesso all'app dopo 3 secondi
+                console.log('🚨 Errore localStorage - accesso forzato in 3 secondi');
+                setTimeout(() => {
+                    document.getElementById('termsModal').style.display = 'none';
+                    showMainApp();
+                    initApp();
+                    showNotification('⚠️ Problema con i termini risolto automaticamente');
+                }, 3000);
+                showTermsModal();
+            }
+        }
+        
+        function showTermsModal() {
+            const termsModal = document.getElementById('termsModal');
+            const mainApp = document.getElementById('mainApp');
+            
+            if (termsModal) {
+                termsModal.style.display = 'flex';
+            }
+            
+            if (mainApp) {
+                mainApp.classList.add('app-hidden');
+            }
+            
+            // Aggiungi gestori eventi con protezione per Firefox
+            const acceptBtn = document.getElementById('acceptTerms');
+            const declineBtn = document.getElementById('declineTerms');
+            
+            if (acceptBtn) {
+                // Rimuovi eventi precedenti per evitare duplicati
+                acceptBtn.onclick = null;
+                acceptBtn.removeEventListener('click', acceptTerms);
+                // Aggiungi nuovo evento
+                acceptBtn.addEventListener('click', acceptTerms);
+                acceptBtn.onclick = acceptTerms; // Doppio binding per sicurezza
+            }
+            
+            if (declineBtn) {
+                declineBtn.onclick = null;
+                declineBtn.removeEventListener('click', declineTerms);
+                declineBtn.addEventListener('click', declineTerms);
+                declineBtn.onclick = declineTerms;
+            }
+            
+            console.log('📋 Modal termini mostrato con gestori eventi Firefox-safe');
+        }
+        
+        function acceptTerms() {
+            console.log('✅ Utente ha accettato i termini');
+            
+            try {
+                const termsVersion = '2025-01-24';
+                
+                // Doppio salvataggio per Firefox
+                localStorage.setItem('termsAccepted', termsVersion);
+                localStorage.setItem('guidaRistorantiTermsOK', 'true');
+                localStorage.setItem('guidaRistorantiVersion', termsVersion);
+                
+                console.log('💾 Termini salvati in localStorage (triplo backup)');
+                
+                // Verifica immediata che il salvataggio sia andato a buon fine
+                const check1 = localStorage.getItem('termsAccepted');
+                const check2 = localStorage.getItem('guidaRistorantiTermsOK');
+                console.log('🔍 Verifica salvataggio:', check1, check2);
+                
+                // Nascondi modal immediatamente
+                const termsModal = document.getElementById('termsModal');
+                if (termsModal) {
+                    termsModal.style.display = 'none';
+                    console.log('🚫 Modal nascosto immediatamente');
+                }
+                
+                // Mostra app immediatamente
+                showMainApp();
+                console.log('📱 App mostrata immediatamente');
+                
+                // Inizializza l'app
+                setTimeout(() => {
+                    initApp();
+                    console.log('🚀 App inizializzata');
+                    showNotification('✅ Termini accettati! Benvenuto!', 'success');
+                }, 50);
+                
+            } catch (error) {
+                console.error('❌ Errore accettazione termini:', error);
+                // Fallback drastico: vai all'app comunque
+                console.log('🚨 FALLBACK: accesso forzato all\'app');
+                document.getElementById('termsModal').style.display = 'none';
+                showMainApp();
+                initApp();
+                showNotification('⚠️ Termini accettati (modalità compatibilità)', 'success');
+            }
+        }
+        
+        function declineTerms() {
+            console.log('❌ Utente ha rifiutato i termini');
+            
+            if (confirm('⚠️ Rifiutando i termini non potrai utilizzare l\'app.\n\nSei sicuro di voler uscire?')) {
+                // Mostra messaggio di blocco
+                document.body.innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <div style="background: rgba(255,255,255,0.95); color: #333; padding: 40px; border-radius: 20px; max-width: 400px; margin: 20px;">
+                            <h2 style="color: #dc3545; margin-bottom: 20px;">❌ Accesso Negato</h2>
+                            <p style="margin-bottom: 15px;">Hai rifiutato i termini di utilizzo.</p>
+                            <p style="margin-bottom: 25px;">Non puoi utilizzare l'app senza accettarli.</p>
+                            <button onclick="location.reload()" style="padding: 15px 25px; background: #007bff; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; font-weight: 600;">
+                                🔄 Ricarica Pagina
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        function showMainApp() {
+            document.getElementById('mainApp').classList.remove('app-hidden');
+        }
+
+        // ===============================
+        // INIZIALIZZAZIONE
+        // ===============================
+        
+        function initApp() {
+            console.log('🚀 Inizializzazione app...');
+            
+            // Inizializza gestione checkbox
+            initializeCheckboxHandlers();
+            
+            // Carica dati
+            loadFromStorage();            
+            // Inizializza event listeners
+            initializeEventListeners();
+            
+            // Aggiorna interfaccia
+            updateStats();
+            updateFilterStyles(); // Reset tab "Cerca" all'avvio
+            
+            console.log('✅ App inizializzata! Ristoranti:', restaurants.length);
+        }
+        
+        function initializeEventListeners() {
+            // Form submission
+            document.getElementById('restaurantForm').addEventListener('submit', handleFormSubmit);
+            
+            // Filter event listeners con controllo esistenza
+            const filterElements = [
+                { id: 'searchByName', event: 'input' },
+                { id: 'filterRegione', event: 'change' },
+                { id: 'filterRating', event: 'change' },
+                { id: 'filterAmbiente', event: 'change' },
+                { id: 'filterTipologia', event: 'change' },
+                { id: 'filterServizi', event: 'change' },
+                { id: 'filterCucina', event: 'change' },
+                { id: 'filterGiorno', event: 'change' },
+                { id: 'filterOggi', event: 'change' }
+            ];
+            
+            filterElements.forEach(filter => {
+                const element = document.getElementById(filter.id);
+                if (element) {
+                    element.addEventListener(filter.event, displayRestaurants);
+                } else {
+                    console.warn(`⚠️ Elemento ${filter.id} non trovato!`);
+                }
+            });
+        }
+
+        // ===============================
+        // GESTIONE DATI
+        // ===============================
+        
+       function saveToStorage() {
+    try {
+        alert('SALVATAGGIO: ' + restaurants.length + ' ristoranti. Primo ristorante: ' + restaurants[0].name);
+        localStorage.setItem('myRestaurants', JSON.stringify(restaurants));
+        localStorage.setItem('lastSaved', new Date().toISOString());
+        console.log('💾 Dati salvati:', restaurants.length, 'ristoranti');
+        return true;
+    } catch (error) {
+        console.error('❌ Errore salvataggio:', error);
+        alert('ERRORE SALVATAGGIO: ' + error);
+        return false;
+    }
+}
+        function loadFromStorage() {
+            try {
+                const saved = localStorage.getItem('myRestaurants');
+                if (saved && saved !== 'null' && saved !== 'undefined') {
+                    const data = JSON.parse(saved);
+                    if (Array.isArray(data)) {
+                        restaurants = data;
+                        console.log('📖 Caricati', restaurants.length, 'ristoranti da storage');
+                        return true;
+                    }
+                }
+                return false;
+            } catch (error) {
+                console.error('❌ Errore caricamento:', error);
+                return false;
+            }
+        }
+
+      
+
+        // ===============================
+        // GESTIONE FORM E RISTORANTI
+        // ===============================
+        
+        // ===============================
+        // FUNZIONE CANCELLA FORM
+        // ===============================
+        function clearForm() {
+            if (editingId) {
+                // Se stai modificando, chiedi conferma
+                if (confirm('⚠️ Stai modificando un ristorante. Vuoi annullare le modifiche?')) {
+                    cancelEdit();
+                }
+            } else {
+                // Se stai inserendo, chiedi conferma solo se c'è qualcosa scritto
+                const name = document.getElementById('name').value.trim();
+                if (name || document.getElementById('citta').value.trim()) {
+                    if (!confirm('🗑️ Vuoi cancellare tutti i dati inseriti?')) {
+                        return;
+                    }
+                }
+                
+                // Reset manuale di tutti i campi
+                document.getElementById('name').value = '';
+                document.getElementById('regione').value = '';
+                document.getElementById('citta').value = '';
+                document.getElementById('indirizzo').value = '';
+                document.getElementById('telefono').value = '';
+                document.getElementById('rating').value = '';
+                document.getElementById('cucina').value = '';
+                document.getElementById('source').value = '';
+                document.getElementById('notes').value = '';
+                document.getElementById('orario').value = '';
+                document.getElementById('chiusure').value = '';
+                
+                // Deseleziona tutti i checkbox
+                ['ambiente_mare', 'ambiente_lago', 'ambiente_montagna', 'ambiente_campagna', 'ambiente_cittaurbana',
+                 'tipo_agriturismo', 'tipo_rustico', 'tipo_caminetto', 'tipo_gestione_caminetto', 'tipo_elegante', 'tipo_moderno',
+                 'servizio_parcheggio', 'servizio_accessibile', 'servizio_petfriendly', 'servizio_nonfumatori',
+                 'giorno_lunedi', 'giorno_martedi', 'giorno_mercoledi', 'giorno_giovedi', 'giorno_venerdi', 'giorno_sabato', 'giorno_domenica'].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) checkbox.checked = false;
+                });
+                
+                // Pulisci stili checkbox
+                clearAllCheckboxStyles();
+                setTimeout(() => {
+                    updateAllCheckboxStyles();
+                }, 100);
+                
+                showNotification('🗑️ Form cancellato');
+            }
+        }
+        
+        // ===============================
+        // MODAL DUPLICATI PERSONALIZZATO
+        // ===============================
+        function showDuplicateModal(duplicates, newName) {
+            return new Promise((resolve) => {
+                // Crea il modal
+                const modal = document.createElement('div');
+                modal.className = 'duplicate-modal';
+                modal.id = 'duplicateModal';
+                
+                const duplicatesList = duplicates.map(r => 
+                    `<div class="duplicate-item">📍 "${r.name}" - ${r.regione}${r.citta ? ', ' + r.citta : ''}</div>`
+                ).join('');
+                
+                modal.innerHTML = `
+                    <div class="duplicate-modal-content">
+                        <div class="duplicate-modal-header">
+                            ⚠️ POSSIBILE DUPLICATO
+                        </div>
+                        <div class="duplicate-modal-body">
+                            <div class="duplicate-warning">
+                                <strong>⚠️ Attenzione!</strong><br>
+                                Stai per inserire: <strong>"${newName}"</strong>
+                            </div>
+                            <div class="duplicate-info">
+                                <strong>❗ Ristoranti simili già presenti:</strong>
+                                ${duplicatesList}
+                            </div>
+                            <p style="font-size: 14px; color: #666; text-align: center; margin-top: 15px;">
+                                Vuoi procedere comunque con l'inserimento?
+                            </p>
+                        </div>
+                        <div class="duplicate-modal-buttons">
+                            <button class="duplicate-btn duplicate-btn-cancel" onclick="closeDuplicateModal(false)">
+                                ❌ Annulla
+                            </button>
+                            <button class="duplicate-btn duplicate-btn-proceed" onclick="closeDuplicateModal(true)">
+                                ✅ Inserisci
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Funzione globale per chiudere il modal
+                window.closeDuplicateModal = (proceed) => {
+                    modal.remove();
+                    delete window.closeDuplicateModal;
+                    resolve(proceed);
+                };
+            });
+        }
+        
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            try {
+                // Raccogli dati base
+                const name = document.getElementById('name').value.trim();
+                const regione = document.getElementById('regione').value;
+                
+                // Validazione
+                if (!name) {
+                    showNotification('❌ Il nome del ristorante è obbligatorio', 'error');
+                    return;
+                }
+                
+                if (!regione) {
+                    showNotification('❌ La regione è obbligatoria', 'error');
+                    return;
+                }
+                
+                // ===============================
+                // CONTROLLO ANTI-DUPLICATI
+                // ===============================
+                if (!editingId) { // Solo per nuovi inserimenti, non per modifiche
+                    const normalizedNewName = name
+                        .toUpperCase()
+                        .replace(/^(IL|LO|LA|I|GLI|LE|L')\s+/i, '') // Rimuove articoli
+                        .trim();
+                    
+                    // Cerca ristoranti simili
+                    const duplicates = restaurants.filter(r => {
+                        const normalizedExisting = r.name
+                            .toUpperCase()
+                            .replace(/^(IL|LO|LA|I|GLI|LE|L')\s+/i, '')
+                            .trim();
+                        return normalizedExisting === normalizedNewName;
+                    });
+                    
+                    if (duplicates.length > 0) {
+                        // Mostra modal personalizzato
+                        const userConfirm = await showDuplicateModal(duplicates, name);
+                        
+                        if (!userConfirm) {
+                            showNotification('❌ Inserimento annullato', 'error');
+                            return;
+                        }
+                    }
+                }
+                // ===============================
+                
+                const restaurant = {
+                    id: editingId || Date.now(),
+                    name: name,
+                    regione: regione,
+                    citta: document.getElementById('citta').value.trim(),
+                    indirizzo: document.getElementById('indirizzo').value.trim(),
+                    telefono: document.getElementById('telefono').value.trim(),
+                    rating: document.getElementById('rating').value,
+                    cucina: document.getElementById('cucina').value,
+                    source: document.getElementById('source').value,
+                    notes: document.getElementById('notes').value.trim(),
+                    orario: document.getElementById('orario').value.trim(),
+                    chiusure: document.getElementById('chiusure').value.trim(),
+                    ambiente: [],
+                    tipologia: [],
+                    servizi: [],
+                    giorni: [],
+                    dateAdded: editingId ? 
+                        restaurants.find(r => r.id === editingId)?.dateAdded || new Date().toLocaleDateString('it-IT') 
+                        : new Date().toLocaleDateString('it-IT')
+                };
+
+                // Raccogli ambiente
+                ['ambiente_mare', 'ambiente_lago', 'ambiente_montagna', 'ambiente_campagna', 'ambiente_cittaurbana'].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox && checkbox.checked) {
+                        restaurant.ambiente.push(checkbox.value);
+                    }
+                });
+
+                // Raccogli tipologia
+                ['tipo_agriturismo', 'tipo_rustico', 'tipo_caminetto', 'tipo_gestione_caminetto', 'tipo_elegante', 'tipo_moderno'].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox && checkbox.checked) {
+                        restaurant.tipologia.push(checkbox.value);
+                    }
+                });
+
+                // Raccogli servizi
+                ['servizio_parcheggio', 'servizio_accessibile', 'servizio_petfriendly', 'servizio_nonfumatori'].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox && checkbox.checked) {
+                        restaurant.servizi.push(checkbox.value);
+                    }
+                });
+
+                // Raccogli giorni
+                ['giorno_lunedi', 'giorno_martedi', 'giorno_mercoledi', 'giorno_giovedi', 'giorno_venerdi', 'giorno_sabato', 'giorno_domenica'].forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox && checkbox.checked) {
+                        restaurant.giorni.push(checkbox.value);
+                    }
+                });
+
+               // Gestisci creazione vs modifica
+if (editingId) {
+   // alert('MODIFICA: editingId = ' + editingId);
+
+    const index = restaurants.findIndex(r => r.id === editingId);
+
+    // alert('Index trovato = ' + index);
+
+    if (index !== -1) {
+       // alert('Sostituisco ristorante in posizione ' + index);
+        restaurants[index] = restaurant;
+    } else {
+        // alert('ERRORE: Index non trovato!');
+    }
+} else {
+    restaurants.push(restaurant);
+}
+                
+                // Salva
+const success = saveToStorage();
+
+if (success) {
+    // SALVA lo stato PRIMA di resettare
+    const wasEditing = editingId !== null;
+    
+  // Reset form
+alert('STO PER RESETTARE IL FORM');
+
+// Reset manuale di tutti i campi
+document.getElementById('name').value = '';
+document.getElementById('regione').value = '';
+document.getElementById('citta').value = '';
+document.getElementById('indirizzo').value = '';
+document.getElementById('telefono').value = '';
+document.getElementById('rating').value = '';
+document.getElementById('cucina').value = '';
+document.getElementById('source').value = '';
+document.getElementById('notes').value = '';
+document.getElementById('orario').value = '';
+document.getElementById('chiusure').value = '';
+
+// Deseleziona tutti i checkbox
+['ambiente_mare', 'ambiente_lago', 'ambiente_montagna', 'ambiente_campagna', 'ambiente_cittaurbana',
+ 'tipo_agriturismo', 'tipo_rustico', 'tipo_caminetto', 'tipo_gestione_caminetto', 'tipo_elegante', 'tipo_moderno',
+ 'servizio_parcheggio', 'servizio_accessibile', 'servizio_petfriendly', 'servizio_nonfumatori',
+ 'giorno_lunedi', 'giorno_martedi', 'giorno_mercoledi', 'giorno_giovedi', 'giorno_venerdi', 'giorno_sabato', 'giorno_domenica'].forEach(id => {
+    const checkbox = document.getElementById(id);
+    if (checkbox) checkbox.checked = false;
+});
+
+
+
+alert('FORM RESETTATO - controlla se è vuoto!');
+    
+    // Reset modalità modifica
+    if (editingId) {
+        cancelEdit();
+    }
+    
+    // Pulisci stili checkbox
+    clearAllCheckboxStyles();
+    setTimeout(() => {
+        updateAllCheckboxStyles();
+    }, 100);
+    
+    // Aggiorna interfaccia
+    updateStats();
+    displayRestaurants();
+    
+    // Feedback - USA wasEditing invece di editingId
+    const message = wasEditing ? '✅ Ristorante modificato con successo!' : '✅ Ristorante aggiunto con successo!';
+    showNotification(message);
+                    
+                    
+                    // Pulisci stili checkbox
+                    clearAllCheckboxStyles();
+                    setTimeout(() => {
+                        updateAllCheckboxStyles();
+                    }, 100);
+                    
+                    // Aggiorna interfaccia
+                    updateStats();
+                    displayRestaurants();
+                    
+                  
+                } else {
+                    if (!editingId) {
+                        restaurants.pop();
+                    }
+                    showNotification('❌ Errore durante il salvataggio', 'error');
+                }
+                
+            } catch (error) {
+                console.error('💥 Errore form:', error);
+                showNotification('❌ Errore imprevisto: ' + error.message, 'error');
+            }
+        }
+
+        // ===============================
+        // GESTIONE TAB
+        // ===============================
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            
+            event.target.classList.add('active');
+            
+            if (tabName === 'add') {
+                document.getElementById('addTab').classList.remove('hidden');
+            } else if (tabName === 'search') {
+                document.getElementById('searchTab').classList.remove('hidden');
+                displayRestaurants();
+            } else if (tabName === 'backup') {
+                document.getElementById('backupTab').classList.remove('hidden');
+                updateStats();
+            } else if (tabName === 'guida') {
+                document.getElementById('guidaTab').classList.remove('hidden');
+            }
+        }
+
+        // ===============================
+        // VISUALIZZAZIONE RISTORANTI
+        // ===============================
+        
+        function displayRestaurants() {
+            updateFilterStyles();
+            
+            // Aggiorna contatore ristoranti totali
+            const totalCount = restaurants.length;
+            const counterElement = document.getElementById('totalRestaurantsCount');
+            if (counterElement) {
+                counterElement.textContent = totalCount;
+            }
+            
+            const container = document.getElementById('restaurantsList');
+            const filteredRestaurants = filterRestaurants();
+            
+            if (filteredRestaurants.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>Nessun ristorante trovato</h3>
+                        <p>Inizia aggiungendo i tuoi ristoranti preferiti!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filteredRestaurants.map(restaurant => `
+                <div class="restaurant-card">
+                    <div class="restaurant-header">
+                        <div class="restaurant-name">${abbreviateRestaurantName(restaurant.name)}</div>
+                        <div class="restaurant-actions">
+                            <div class="restaurant-actions-row">
+                                <button class="action-btn share-btn" onclick="shareRestaurant(${restaurant.id})" title="Condividi">📤</button>
+                                <button class="action-btn edit-btn" onclick="editRestaurant(${restaurant.id})" title="Modifica">✏️</button>
+                                <button class="action-btn delete-btn" onclick="deleteRestaurant(${restaurant.id})" title="Elimina">🗑️</button>
+                            </div>
+                            ${restaurant.rating ? `<div class="restaurant-rating">${'⭐'.repeat(restaurant.rating)}</div>` : ''}
+                        </div>
+                    </div>
+                    <div class="restaurant-location">
+    📍 ${restaurant.regione}${restaurant.citta ? `, ${restaurant.citta}` : ''}
+    ${restaurant.indirizzo ? `<br>🏠 <strong>${restaurant.indirizzo}</strong>` : ''}
+    ${restaurant.telefono ? `<br>📞 <a href="tel:${restaurant.telefono}" style="color: #ff6b6b; text-decoration: none; font-weight: 600;">${restaurant.telefono}</a>` : ''}
+    ${generateMapButton(restaurant)}
+  ${restaurant.orario ? `<br>🕐 ${restaurant.orario}` : ''}
+    ${restaurant.giorni && restaurant.giorni.length > 0 ? `<br>📅 ${restaurant.giorni.join(', ')}` : ''}
+    ${restaurant.chiusure ? `<br>❌ ${restaurant.chiusure}` : ''}
+</div>
+
+                    <hr style="border: none; border-top: 1px solid #e9ecef; margin: 12px 0 8px 0;">
+
+                     <div class="restaurant-tags">
+                        ${restaurant.ambiente.map(a => `<span class="tag">${a}</span>`).join('')}
+                        ${restaurant.tipologia.map(t => `<span class="tag">${t}</span>`).join('')}
+                        ${restaurant.servizi ? restaurant.servizi.map(s => `<span class="tag">${s}</span>`).join('') : ''}
+                        ${restaurant.cucina ? `<span class="tag">🍽️ ${restaurant.cucina}</span>` : ''}
+                        ${restaurant.source ? `<span class="tag">${restaurant.source}</span>` : ''}
+                    </div>
+                    ${restaurant.notes ? `<div class="restaurant-notes" style="margin-top: 10px; padding: 8px; background: #f8f9fa; border-left: 3px solid #ff6b6b; border-radius: 0 5px 5px 0; font-style: italic;">"${restaurant.notes}"</div>` : ''}
+                </div>
+
+            `).join('');
+        // Aggiorna stato pulsante cancella filtri
+const nameSearch = document.getElementById('searchByName').value.toLowerCase().trim();
+const regioneFilter = document.getElementById('filterRegione').value;
+const ratingFilter = document.getElementById('filterRating').value;
+const ambienteFilter = document.getElementById('filterAmbiente').value;
+const tipologiaFilter = document.getElementById('filterTipologia').value;
+const serviziFilter = document.getElementById('filterServizi').value;
+const giornoFilter = document.getElementById('filterGiorno').value;
+const oggiFilter = document.getElementById('filterOggi').value;
+
+let filtriAttivi = 0;
+if (nameSearch) filtriAttivi++;
+if (regioneFilter) filtriAttivi++;
+if (ratingFilter) filtriAttivi++;
+if (ambienteFilter) filtriAttivi++;
+}
+
+        function filterRestaurants() {
+            const nameSearch = document.getElementById('searchByName').value.toLowerCase().trim();
+            const regioneFilter = document.getElementById('filterRegione').value;
+            const ratingFilter = document.getElementById('filterRating').value;
+            const ambienteFilter = document.getElementById('filterAmbiente').value;
+            const tipologiaFilter = document.getElementById('filterTipologia').value;
+            const serviziFilter = document.getElementById('filterServizi').value;
+            const cucinaFilter = document.getElementById('filterCucina').value;
+            const giornoFilter = document.getElementById('filterGiorno').value;
+            const oggiFilter = document.getElementById('filterOggi').value;
+
+            return restaurants.filter(restaurant => {
+                if (nameSearch) {
+                    const searchableText = [
+                        restaurant.name,
+                        restaurant.address,
+                        restaurant.phone,
+                        restaurant.email,
+                        restaurant.notes
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    if (!searchableText.includes(nameSearch)) {
+                        return false;
+                    }
+                }
+                if (regioneFilter && restaurant.regione !== regioneFilter) return false;
+                if (ratingFilter && restaurant.rating !== ratingFilter) return false;
+                if (ambienteFilter && !restaurant.ambiente.includes(ambienteFilter)) return false;
+                if (tipologiaFilter && !restaurant.tipologia.includes(tipologiaFilter)) return false;
+                if (serviziFilter && restaurant.servizi && !restaurant.servizi.includes(serviziFilter)) return false;
+                if (cucinaFilter && restaurant.cucina !== cucinaFilter) return false;
+                
+                if (giornoFilter && restaurant.giorni && !restaurant.giorni.includes(giornoFilter)) {
+                    return false;
+                }
+                
+                if (oggiFilter && restaurant.giorni) {
+                    if (oggiFilter === 'oggi') {
+                        const today = getTodayName();
+                        if (!restaurant.giorni.includes(today)) return false;
+                    } else if (oggiFilter === 'weekend') {
+                        const hasWeekend = restaurant.giorni.includes('Sabato') || restaurant.giorni.includes('Domenica');
+                        if (!hasWeekend) return false;
+                    } else if (oggiFilter === 'festivi') {
+                        const hasFestivi = restaurant.giorni.includes('Domenica');
+                        if (!hasFestivi) return false;
+                    }
+                }
+                
+                return true;
+            });
+        }
+
+        function getTodayName() {
+            const giorni = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+            const today = new Date().getDay();
+            return giorni[today];
+        }
+
+        function updateFilterStyles() {
+            // Conta i filtri attivi
+            let activeFiltersCount = 0;
+            
+            if (document.getElementById('searchByName').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterRegione').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterRating').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterAmbiente').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterTipologia').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterServizi').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterCucina').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterGiorno').value !== '') activeFiltersCount++;
+            if (document.getElementById('filterOggi').value !== '') activeFiltersCount++;
+            
+            const hasActiveFilters = activeFiltersCount > 0;
+            
+            // Aggiorna il testo del tab Cerca - PROVA MULTIPLA
+            // Metodo 1: querySelector diretto
+            let searchTab = document.querySelector('button.tab[onclick*="search"]');
+            if (searchTab) {
+                searchTab.textContent = activeFiltersCount > 0 ? `Cerca (${activeFiltersCount})` : 'Cerca';
+            }
+            
+            // Metodo 2: Loop su tutti i button
+            document.querySelectorAll('button.tab').forEach(tab => {
+                const onclick = tab.getAttribute('onclick');
+                if (onclick && onclick.includes("'search'")) {
+                    tab.textContent = activeFiltersCount > 0 ? `Cerca (${activeFiltersCount})` : 'Cerca';
+                }
+            });
+            
+            // Metodo 3: Secondo button della classe tab (posizione fissa)
+            const allTabs = document.querySelectorAll('.tab');
+            if (allTabs.length >= 2) {
+                allTabs[1].textContent = activeFiltersCount > 0 ? `Cerca (${activeFiltersCount})` : 'Cerca';
+            }
+            
+            // Applica grassetto ai filtri attivi
+            const filters = [
+                'searchByName', 'filterRegione', 'filterRating', 
+                'filterAmbiente', 'filterTipologia', 'filterServizi', 
+                'filterCucina', 'filterGiorno', 'filterOggi'
+            ];
+            
+            filters.forEach(filterId => {
+                const element = document.getElementById(filterId);
+                if (element && element.value !== '') {
+                    element.style.fontWeight = 'bold';
+                    element.style.borderColor = '#ff6b6b';
+                } else if (element) {
+                    element.style.fontWeight = 'normal';
+                    element.style.borderColor = '#e9ecef';
+                }
+            });
+            
+            // Aggiorna il pulsante cancella filtri
+            const btnCancella = document.getElementById('btnCancellaFiltri');
+            
+            if (btnCancella) {
+                // Rimuovi tutte le classi che potrebbero interferire
+                btnCancella.className = '';
+                
+                if (hasActiveFilters) {
+                    // ROSSO quando ci sono filtri
+                    btnCancella.style.cssText = `
+                        background-color: #ff6b6b !important;
+                        color: white !important;
+                        width: auto;
+                        padding: 6px 12px;
+                        font-size: 13px;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                    `;
+                    btnCancella.innerHTML = `🗑️ Cancella filtri (${activeFiltersCount})`;
+                } else {
+                    // GRIGIO quando NON ci sono filtri
+                    btnCancella.style.cssText = `
+                        background-color: #95a5a6;
+                        color: #ecf0f1;
+                        width: auto;
+                        padding: 6px 12px;
+                        font-size: 13px;
+                        border: none;
+                        border-radius: 6px;
+                        cursor: pointer;
+                    `;
+                    btnCancella.innerHTML = '🗑️ Nessun filtro attivo';
+                }
+            }
+        }
+
+        function clearAllFilters() {
+            document.getElementById('searchByName').value = '';
+            document.getElementById('filterRegione').value = '';
+            document.getElementById('filterRating').value = '';
+            document.getElementById('filterAmbiente').value = '';
+            document.getElementById('filterTipologia').value = '';
+            document.getElementById('filterServizi').value = '';
+            document.getElementById('filterCucina').value = '';
+            document.getElementById('filterGiorno').value = '';
+            document.getElementById('filterOggi').value = '';
+            updateFilterStyles();
+            displayRestaurants();
+            showNotification('🗑️ Tutti i filtri sono stati cancellati');
+        }
+
+        // ===============================
+        // FUNZIONE CONDIVISIONE RISTORANTE
+        // ===============================
+        
+        function shareRestaurant(id) {
+            const restaurant = restaurants.find(r => r.id === id);
+            if (!restaurant) {
+                showNotification('❌ Ristorante non trovato', 'error');
+                return;
+            }
+            
+            // Crea il testo da condividere
+            let shareText = `🍽️ *${restaurant.name}*\n`;
+            shareText += `📍 ${restaurant.regione}${restaurant.citta ? `, ${restaurant.citta}` : ''}\n`;
+            
+            if (restaurant.rating) {
+                shareText += `⭐ ${'⭐'.repeat(restaurant.rating)} (${restaurant.rating}/5)\n`;
+            }
+            
+            if (restaurant.indirizzo) {
+    shareText += `🏠 ${restaurant.indirizzo}\n`;
+}
+
+if (restaurant.telefono) {
+    shareText += `📞 ${restaurant.telefono}\n`;
+}
+            
+            if (restaurant.orario) {
+                shareText += `🕐 ${restaurant.orario}\n`;
+            }
+            
+            if (restaurant.giorni && restaurant.giorni.length > 0) {
+                shareText += `📅 Aperto: ${restaurant.giorni.join(', ')}\n`;
+            }
+            
+            if (restaurant.ambiente.length > 0) {
+                shareText += `🌟 ${restaurant.ambiente.join(', ')}\n`;
+            }
+            
+            if (restaurant.tipologia.length > 0) {
+                shareText += `🏪 ${restaurant.tipologia.join(', ')}\n`;
+            }
+            
+            if (restaurant.notes) {
+                shareText += `💭 "${restaurant.notes}"\n`;
+            }
+            
+            if (restaurant.chiusure) {
+                shareText += `❌ Chiusure: ${restaurant.chiusure}\n`;
+            }
+            
+         
+            
+            // Verifica se il Web Share API è supportato
+            if (navigator.share) {
+                navigator.share({
+                    title: `🍽️ ${restaurant.name}`,
+                    text: shareText
+                }).then(() => {
+                    showNotification('📤 Ristorante condiviso!');
+                }).catch((error) => {
+                    console.log('Errore condivisione:', error);
+                    fallbackShare(shareText);
+                });
+            } else {
+                // Fallback per browser che non supportano Web Share API
+                fallbackShare(shareText);
+            }
+        }
+        
+        function fallbackShare(text) {
+            // Copia il testo negli appunti
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showNotification('📋 Testo copiato negli appunti! Ora puoi incollarlo dove vuoi condividerlo.');
+                }).catch(() => {
+                    // Se clipboard non funziona, mostra il testo in un alert
+                    alert('📤 Copia questo testo per condividerlo:\n\n' + text);
+                });
+            } else {
+                // Metodo alternativo per browser più vecchi
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    showNotification('📋 Testo copiato negli appunti!');
+                } catch (err) {
+                    alert('📤 Copia questo testo per condividerlo:\n\n' + text);
+                }
+                
+                document.body.removeChild(textArea);
+            }
+        }
+
+        // ===============================
+        // FUNZIONE GOOGLE MAPS
+        // ===============================
+        
+        function generateMapButton(restaurant) {
+            // Se non ha almeno città, non mostrare il pulsante
+            if (!restaurant.citta && !restaurant.indirizzo) {
+                return '';
+            }
+            
+            // Costruisci la query per Google Maps
+            let query = '';
+            if (restaurant.indirizzo) {
+                query = `${restaurant.indirizzo}, `;
+            }
+            if (restaurant.citta) {
+                query += `${restaurant.citta}, `;
+            }
+            query += restaurant.regione || '';
+            query += ', Italia';
+            
+            // Aggiungi il nome del ristorante per precisione
+            if (restaurant.name) {
+                query = `${restaurant.name}, ${query}`;
+            }
+            
+            // Encode per URL
+            const encodedQuery = encodeURIComponent(query.trim());
+            const encodedName = encodeURIComponent(restaurant.name);
+            const mapPageUrl = `mappa.html?q=${encodedQuery}&name=${encodedName}`;
+            
+            return `<br><a href="${mapPageUrl}" target="_blank" rel="noopener noreferrer" style="
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: linear-gradient(45deg, #4285f4, #34a853);
+                color: white;
+                padding: 6px 12px;
+                border-radius: 15px;
+                text-decoration: none;
+                font-size: 12px;
+                font-weight: 600;
+                margin-top: 5px;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                📍 Visualizza su Mappa
+            </a>`;
+        }
+        
+        function openGoogleMaps(restaurant) {
+            let query = '';
+            if (restaurant.indirizzo) {
+                query = `${restaurant.indirizzo}, `;
+            }
+            if (restaurant.citta) {
+                query += `${restaurant.citta}, `;
+            }
+            query += restaurant.regione || '';
+            query += ', Italia';
+            
+            if (restaurant.name) {
+                query = `${restaurant.name}, ${query}`;
+            }
+            
+            const encodedQuery = encodeURIComponent(query.trim());
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodedQuery}`;
+            
+            window.open(mapsUrl, '_blank', 'noopener,noreferrer');
+        }
+        
+        function abbreviateRestaurantName(name) {
+            if (!name) return name;
+            
+            // Mappa delle abbreviazioni intelligenti
+            const abbreviations = {
+                'Ristorante': 'Rist.',
+                'ristorante': 'rist.',
+                'Agriturismo': 'Agrit.',
+                'agriturismo': 'agrit.',
+                'Pizzeria': 'Pizz.',
+                'pizzeria': 'pizz.',
+                'Trattoria': 'Tratt.',
+                'trattoria': 'tratt.',
+                'Osteria': 'Ost.',
+                'osteria': 'ost.',
+                'Taverna': 'Tav.',
+                'taverna': 'tav.',
+                'Locanda': 'Loc.',
+                'locanda': 'loc.',
+                'Braceria': 'Brac.',
+                'braceria': 'brac.',
+                'Steakhouse': 'Steak.',
+                'steakhouse': 'steak.',
+                'Enoteca': 'Enot.',
+                'enoteca': 'enot.',
+                'Gastronomia': 'Gastro.',
+                'gastronomia': 'gastro.',
+                'Birreria': 'Birr.',
+                'birreria': 'birr.',
+                'Pasticceria': 'Past.',
+                'pasticceria': 'past.',
+                'Gelateria': 'Gel.',
+                'gelateria': 'gel.',
+                'Hotel Ristorante': 'Hotel Rist.',
+                'hotel ristorante': 'hotel rist.',
+                'Ristorante Hotel': 'Rist. Hotel',
+                'ristorante hotel': 'rist. hotel',
+                'Ristorante Pizzeria': 'Rist. Pizz.',
+                'ristorante pizzeria': 'rist. pizz.',
+                'Pizzeria Ristorante': 'Pizz. Rist.',
+                'pizzeria ristorante': 'pizz. rist.'
+            };
+            
+            let abbreviatedName = name;
+            
+            // Applica le abbreviazioni
+            for (const [full, abbrev] of Object.entries(abbreviations)) {
+                abbreviatedName = abbreviatedName.replace(new RegExp(full, 'g'), abbrev);
+            }
+            
+            return abbreviatedName;
+        }
+        
+        function editRestaurant(id) {
+console.log('🔥 EDITRESTAURANT CHIAMATA! ID:', id);
+// alert('EDIT CHIAMATO PER ID: ' + id);
+            const restaurant = restaurants.find(r => r.id === id);
+            if (!restaurant) {
+                showNotification('❌ Ristorante non trovato', 'error');
+                return;
+            }
+  
+          
+            editingId = id;
+console.log('🔍 editingId impostato a:', editingId);
+
+console.log('🔍 DEBUG: editingId impostato a:', editingId);
+console.log('🔍 DEBUG: Ristorante da modificare:', restaurant);
+            
+            // Popola il form
+            document.getElementById('name').value = restaurant.name || '';
+            document.getElementById('regione').value = restaurant.regione || '';
+            document.getElementById('citta').value = restaurant.citta || '';
+            document.getElementById('indirizzo').value = restaurant.indirizzo || '';
+            document.getElementById('telefono').value = restaurant.telefono || '';
+            document.getElementById('rating').value = restaurant.rating || '';
+            document.getElementById('cucina').value = restaurant.cucina || '';
+            document.getElementById('source').value = restaurant.source || '';
+            document.getElementById('notes').value = restaurant.notes || '';
+            document.getElementById('orario').value = restaurant.orario || '';
+            document.getElementById('chiusure').value = restaurant.chiusure || '';
+            
+            // Seleziona ambiente
+            ['ambiente_mare', 'ambiente_lago', 'ambiente_montagna', 'ambiente_campagna', 'ambiente_cittaurbana'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.checked = restaurant.ambiente.includes(checkbox.value);
+                }
+            });
+            
+            // Seleziona tipologia
+            ['tipo_agriturismo', 'tipo_rustico', 'tipo_caminetto', 'tipo_gestione_caminetto', 'tipo_elegante', 'tipo_moderno'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox) {
+                    checkbox.checked = restaurant.tipologia.includes(checkbox.value);
+                }
+            });
+            
+            // Seleziona servizi
+            ['servizio_parcheggio', 'servizio_accessibile', 'servizio_petfriendly', 'servizio_nonfumatori'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox && restaurant.servizi) {
+                    checkbox.checked = restaurant.servizi.includes(checkbox.value);
+                }
+            });
+            
+            // Seleziona giorni
+            ['giorno_lunedi', 'giorno_martedi', 'giorno_mercoledi', 'giorno_giovedi', 'giorno_venerdi', 'giorno_sabato', 'giorno_domenica'].forEach(id => {
+                const checkbox = document.getElementById(id);
+                if (checkbox && restaurant.giorni) {
+                    checkbox.checked = restaurant.giorni.includes(checkbox.value);
+                }
+            });
+            
+            // Aggiorna stili checkbox
+            setTimeout(() => {
+                updateAllCheckboxStyles();
+            }, 100);
+            
+            // Cambia il bottone del form
+
+console.log('🔍 DEBUG: Provo a trovare il pulsante submitBtn...');
+console.log('🔍 Cerco submitBtn...');
+            
+const submitBtn = document.getElementById('submitBtn');
+
+
+console.log('🔍 submitBtn =', submitBtn);
+if (!submitBtn) {
+    alert('ERRORE: submitBtn NON TROVATO!');
+    return;
+}
+
+
+            submitBtn.textContent = '📝 Aggiorna Ristorante';
+            submitBtn.style.background = 'linear-gradient(45deg, #ffc107, #e0a800)';
+            
+            // Aggiungi bottone annulla
+            if (!document.getElementById('cancelEditBtn')) {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.type = 'button';
+                cancelBtn.id = 'cancelEditBtn';
+                cancelBtn.className = 'btn btn-secondary';
+                cancelBtn.textContent = '❌ Annulla Modifica';
+                cancelBtn.style.marginTop = '10px';
+                cancelBtn.onclick = cancelEdit;
+                submitBtn.parentNode.appendChild(cancelBtn);
+            }
+
+// Nascondi il bottone "Cerca su Google" durante la modifica
+const googleSearchBtn = document.getElementById('googleSearchBtn');
+if (googleSearchBtn) {
+    googleSearchBtn.style.display = 'none';
+}
+            
+            // Vai al tab aggiungi
+            showTab('add');
+            
+            showNotification(`✏️ Modifica di "${restaurant.name}" attiva`);
+        }
+        
+        function cancelEdit() {
+            editingId = null;
+            document.getElementById('restaurantForm').reset();
+            
+            clearAllCheckboxStyles();
+            setTimeout(() => {
+                updateAllCheckboxStyles();
+            }, 100);
+            
+          const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Aggiungi Ristorante';
+            submitBtn.style.background = '';
+
+// Mostra di nuovo il bottone "Cerca su Google"
+const googleSearchBtn = document.getElementById('googleSearchBtn');
+if (googleSearchBtn) {
+    googleSearchBtn.style.display = 'block';
+}
+
+            
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            if (cancelBtn) {
+                cancelBtn.remove();
+            }
+            
+            showNotification('❌ Modifica annullata');
+        }
+
+        function deleteRestaurant(id) {
+            const restaurant = restaurants.find(r => r.id === id);
+            if (!restaurant) return;
+            
+            if (confirm(`Sei sicuro di voler eliminare "${restaurant.name}"?`)) {
+                restaurants = restaurants.filter(r => r.id !== id);
+                saveToStorage();
+                displayRestaurants();
+                updateStats();
+                showNotification('🗑️ Ristorante eliminato');
+            }
+        }
+
+        // ===============================
+        // GESTIONE CHECKBOX
+        // ===============================
+        
+        function initializeCheckboxHandlers() {
+            document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    updateCheckboxStyle(this);
+                });
+            });
+            updateAllCheckboxStyles();
+        }
+
+        function updateCheckboxStyle(checkbox) {
+            const container = checkbox.closest('.checkbox-item');
+            if (container) {
+                if (checkbox.checked) {
+                    container.classList.add('selected');
+                } else {
+                    container.classList.remove('selected');
+                }
+            }
+        }
+
+        function updateAllCheckboxStyles() {
+            document.querySelectorAll('.checkbox-item input[type="checkbox"]').forEach(checkbox => {
+                updateCheckboxStyle(checkbox);
+            });
+        }
+
+        function clearAllCheckboxStyles() {
+            document.querySelectorAll('.checkbox-item').forEach(container => {
+                container.classList.remove('selected');
+            });
+        }
+
+        // ===============================
+        // BACKUP VIA EMAIL
+        // ===============================
+        
+        function sendBackupEmail() {
+            try {
+                const backup = {
+                    version: '1.0',
+                    timestamp: new Date().toISOString(),
+                    data: restaurants
+                };
+                
+                const backupJson = JSON.stringify(backup, null, 2);
+                const timestamp = new Date().toISOString().split('T')[0];
+                const fileName = `ristoranti_backup_${timestamp}.json`;
+                
+                // Crea il contenuto dell'email
+                const emailSubject = `🍽️ Backup RistoMemo - ${new Date().toLocaleDateString('it-IT')}`;
+                const emailBody = `Ciao!
+
+Questo è il backup automatico della tua Guida Ristoranti del ${new Date().toLocaleDateString('it-IT')}.
+
+📊 CONTENUTO BACKUP:
+• ${restaurants.length} ristoranti salvati
+• Data backup: ${new Date().toLocaleString('it-IT')}
+• Versione app: 1.0
+
+🔧 COME RIPRISTINARE:
+1. Salva il file allegato sul tuo dispositivo
+2. Apri l'app "RistoMemo" 
+3. Vai al tab "Backup"
+4. Clicca "📤 Carica Backup da File"
+5. Seleziona questo file
+6. Conferma il ripristino
+
+⚠️ IMPORTANTE:
+• Conserva questo backup in luogo sicuro
+• Fai backup regolarmente (almeno 1 volta al mese)
+• Questo file contiene TUTTI i tuoi ristoranti
+
+🍽️ Buon appetito!
+---
+RistoMemo by Enrico Sarri`;
+
+                // Crea il blob del file di backup
+                const blob = new Blob([backupJson], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                // Crea il link mailto con allegato (fallback)
+                const mailtoLink = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+                
+                // Prova prima con il Web Share API se supportato
+                if (navigator.share && navigator.canShare && navigator.canShare({files: [new File([blob], fileName, {type: 'application/json'})]})) {
+                    const file = new File([blob], fileName, {type: 'application/json'});
+                    navigator.share({
+                        title: emailSubject,
+                        text: 'Backup della tua Guida Ristoranti',
+                        files: [file]
+                    }).then(() => {
+                        showNotification('📧 Backup condiviso! Invialo alla tua email.');
+                        localStorage.setItem('lastBackupDate', new Date().toISOString());
+                    }).catch((error) => {
+                        console.log('Share API fallback:', error);
+                        fallbackEmailBackup(mailtoLink, blob, fileName);
+                    });
+                } else {
+                    // Fallback: download + mailto
+                    fallbackEmailBackup(mailtoLink, blob, fileName);
+                }
+                
+            } catch (error) {
+                console.error('Errore backup email:', error);
+                showNotification('❌ Errore durante la creazione del backup', 'error');
+            }
+        }
+        
+        function fallbackEmailBackup(mailtoLink, blob, fileName) {
+            // Rileva se siamo su PC o mobile
+            const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Su mobile: download + mailto
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                setTimeout(() => {
+                    window.location.href = mailtoLink;
+                }, 500);
+                
+                localStorage.setItem('lastBackupDate', new Date().toISOString());
+                showNotification('📧 File scaricato! Si aprirà l\'email - allegalo manualmente.', 'success');
+            } else {
+                // Su PC: modalità più user-friendly
+                showPCBackupModal(blob, fileName, mailtoLink);
+            }
+        }
+        
+        function showPCBackupModal(blob, fileName, mailtoLink) {
+            // Scarica automaticamente il file
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Prepara il testo email da copiare
+            const emailText = `Oggetto: 🍽️ Backup Ristoranti ${new Date().toLocaleDateString('it-IT')}
+
+Ciao!
+
+Questo è il backup automatico del RistoMemo del ${new Date().toLocaleDateString('it-IT')}.
+
+📊 CONTENUTO BACKUP:
+• ${restaurants.length} ristoranti salvati
+• Data backup: ${new Date().toLocaleString('it-IT')}
+
+🔧 COME RIPRISTINARE:
+1. Salva il file allegato sul dispositivo
+2. Apri l'app "RistoMemo" 
+3. Vai al tab "Backup"
+4. Clicca "📤 Carica Backup da File"
+5. Seleziona questo file
+
+⚠️ IMPORTANTE: Conserva questo backup in luogo sicuro!
+
+🍽️ Buon appetito!`;
+            
+            // Mostra istruzioni dettagliate per PC
+            const modalHTML = `
+                <div id="pcBackupModal" style="
+                    position: fixed; 
+                    top: 0; 
+                    left: 0; 
+                    width: 100%; 
+                    height: 100%; 
+                    background: rgba(0,0,0,0.8); 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    z-index: 3000;
+                    backdrop-filter: blur(5px);
+                ">
+                    <div style="
+                        background: white; 
+                        padding: 30px; 
+                        border-radius: 20px; 
+                        max-width: 600px; 
+                        margin: 20px;
+                        box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+                        max-height: 90vh;
+                        overflow-y: auto;
+                    ">
+                        <h3 style="color: #0066cc; margin-bottom: 20px; text-align: center;">
+                            📧 Backup Scaricato! (PC)
+                        </h3>
+                        
+                        <div style="background: #d4edda; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                            <p style="margin: 0; font-weight: 600;">✅ File scaricato: <code>${fileName}</code></p>
+                            <p style="margin: 5px 0 0 0; font-size: 13px;">📁 Cerca nella cartella "Download" del tuo PC</p>
+                        </div>
+                        
+                        <h4 style="color: #333; margin-bottom: 10px;">🎯 SCEGLI IL TUO METODO:</h4>
+                        
+                        <!-- METODO 1: Gmail Web -->
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #db4437;">
+                            <h5 style="color: #db4437; margin-bottom: 10px;">📧 METODO 1: Gmail (Web)</h5>
+                            <ol style="margin-bottom: 10px; padding-left: 20px; line-height: 1.5; font-size: 14px;">
+                                <li>Vai su <strong>gmail.com</strong></li>
+                                <li>Clicca <strong>"Scrivi"</strong></li>
+                                <li>Nel campo "A:" metti <strong>il tuo indirizzo email</strong></li>
+                                <li>Clicca l'icona <strong>📎 "Allega file"</strong></li>
+                                <li>Seleziona il file <code>${fileName}</code> dalla cartella Download</li>
+                                <li>Invia!</li>
+                            </ol>
+                            <button onclick="window.open('https://gmail.com', '_blank')" style="
+                                background: #db4437; color: white; border: none; padding: 8px 15px; 
+                                border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600;
+                            ">🚀 Apri Gmail</button>
+                        </div>
+                        
+                        <!-- METODO 2: Outlook Web -->
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #0078d4;">
+                            <h5 style="color: #0078d4; margin-bottom: 10px;">📧 METODO 2: Outlook (Web)</h5>
+                            <ol style="margin-bottom: 10px; padding-left: 20px; line-height: 1.5; font-size: 14px;">
+                                <li>Vai su <strong>outlook.com</strong></li>
+                                <li>Clicca <strong>"Nuovo messaggio"</strong></li>
+                                <li>Nel campo "A:" metti <strong>il tuo indirizzo email</strong></li>
+                                <li>Clicca <strong>"Allega" o 📎</strong></li>
+                                <li>Seleziona il file dalla cartella Download</li>
+                                <li>Invia!</li>
+                            </ol>
+                            <button onclick="window.open('https://outlook.com', '_blank')" style="
+                                background: #0078d4; color: white; border: none; padding: 8px 15px; 
+                                border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600;
+                            ">🚀 Apri Outlook</button>
+                        </div>
+                        
+                        <!-- METODO 3: Client Desktop -->
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 4px solid #6c757d;">
+                            <h5 style="color: #6c757d; margin-bottom: 10px;">💻 METODO 3: Client Email Desktop</h5>
+                            <p style="margin-bottom: 10px; font-size: 14px;">Se usi Thunderbird, Outlook Desktop, Mail di Windows:</p>
+                            <ol style="margin-bottom: 10px; padding-left: 20px; line-height: 1.5; font-size: 14px;">
+                                <li>Apri il tuo programma email abituale</li>
+                                <li>Crea nuovo messaggio</li>
+                                <li>Allega il file dalla cartella Download</li>
+                                <li>Invia a te stesso</li>
+                            </ol>
+                            <button onclick="copyEmailText('${emailText.replace(/'/g, "\\'")}'); showCopySuccess();" style="
+                                background: #6c757d; color: white; border: none; padding: 8px 15px; 
+                                border-radius: 5px; cursor: pointer; font-size: 12px; font-weight: 600;
+                            ">📋 Copia Testo Email</button>
+                        </div>
+                        
+                        <div style="text-align: center;">
+                            <button onclick="closePCBackupModal()" style="
+                                background: #28a745; 
+                                color: white; 
+                                border: none; 
+                                padding: 15px 30px; 
+                                border-radius: 10px; 
+                                cursor: pointer; 
+                                font-weight: 600;
+                                font-size: 16px;
+                            ">✅ Ho Capito, Grazie!</button>
+                        </div>
+                        
+                        <div id="copySuccess" style="
+                            background: #d4edda; 
+                            color: #155724; 
+                            padding: 10px; 
+                            border-radius: 5px; 
+                            margin-top: 15px; 
+                            text-align: center; 
+                            display: none;
+                        ">
+                            📋 Testo copiato! Ora incollalo nell'email.
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            localStorage.setItem('lastBackupDate', new Date().toISOString());
+            showNotification('💾 Backup scaricato! Scegli il metodo email che preferisci.', 'success');
+        }
+        
+        function copyEmailText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Testo email copiato');
+            }).catch(() => {
+                // Fallback per browser più vecchi
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            });
+        }
+        
+        function showCopySuccess() {
+            const successDiv = document.getElementById('copySuccess');
+            if (successDiv) {
+                successDiv.style.display = 'block';
+                setTimeout(() => {
+                    successDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        function openEmailClient(mailtoLink) {
+            window.open(mailtoLink, '_blank');
+            closePCBackupModal();
+        }
+        
+        function closePCBackupModal() {
+            const modal = document.getElementById('pcBackupModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+        
+        function createBackup() {
+            const backup = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                data: restaurants
+            };
+            
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ristoranti_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            localStorage.setItem('lastBackupDate', new Date().toISOString());
+            showNotification('💾 Backup creato con successo!');
+        }
+
+        // ===============================
+        // BACKUP ALTERNATIVO PER iPHONE
+        // ===============================
+        
+        function showBackupText() {
+            const backup = {
+                version: '1.0',
+                timestamp: new Date().toISOString(),
+                data: restaurants
+            };
+            
+            const backupText = JSON.stringify(backup, null, 2);
+            const textarea = document.getElementById('backupTextarea');
+            textarea.value = backupText;
+            textarea.style.display = 'block';
+            
+            // Seleziona tutto il testo per facilitare la copia
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // Per dispositivi mobili
+            
+            showNotification('📋 Backup mostrato! Copia tutto il testo e salvalo nelle tue Note.');
+        }
+        
+        function loadFromText() {
+            const textarea = document.getElementById('backupTextarea');
+            const text = textarea.value.trim();
+            
+            if (!text) {
+                showNotification('❌ Incolla prima il testo del backup nella casella', 'error');
+                return;
+            }
+            
+            try {
+                const backup = JSON.parse(text);
+                
+                if (backup.data && Array.isArray(backup.data)) {
+                    if (confirm(`Vuoi ripristinare ${backup.data.length} ristoranti dal backup? Questo sostituirà i dati attuali.`)) {
+                        restaurants = backup.data;
+                        saveToStorage();
+                        updateStats();
+                        displayRestaurants();
+                        textarea.value = '';
+                        textarea.style.display = 'none';
+                        showNotification('📤 Backup ripristinato con successo!');
+                    }
+                } else {
+                    showNotification('❌ Il testo non contiene un backup valido', 'error');
+                }
+            } catch (e) {
+                console.log('Errore backup da testo:', e);
+                showNotification('❌ Errore nel formato del backup. Controlla che il testo sia corretto.', 'error');
+            }
+        }
+
+        async function loadBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            try {
+                const text = await file.text();
+                const backup = JSON.parse(text);
+                
+                if (backup.data && Array.isArray(backup.data)) {
+                    if (confirm(`Vuoi ripristinare ${backup.data.length} ristoranti dal backup? Questo sostituirà i dati attuali.`)) {
+                        restaurants = backup.data;
+                        saveToStorage();
+                        updateStats();
+                        displayRestaurants();
+                        showNotification('📤 Backup ripristinato con successo!');
+                    }
+                } else {
+                    showNotification('❌ File backup non valido', 'error');
+                }
+            } catch (e) {
+                console.log('Errore backup:', e);
+                showNotification('❌ Errore durante il ripristino', 'error');
+            }
+            
+            event.target.value = '';
+        }
+
+        function updateStats() {
+            document.getElementById('totalRestaurants').textContent = restaurants.length;
+            
+            // Aggiorna anche il contatore nel tab Cerca
+            const counterElement = document.getElementById('totalRestaurantsCount');
+            if (counterElement) {
+                counterElement.textContent = restaurants.length;
+            }
+            
+            const uniqueRegions = [...new Set(restaurants.map(r => r.regione))];
+            document.getElementById('totalRegions').textContent = uniqueRegions.length;
+            
+            const ratingsWithValues = restaurants.filter(r => r.rating && r.rating !== '');
+            if (ratingsWithValues.length > 0) {
+                const average = ratingsWithValues.reduce((sum, r) => sum + parseInt(r.rating), 0) / ratingsWithValues.length;
+                document.getElementById('averageRating').textContent = average.toFixed(1) + ' ⭐';
+            } else {
+                document.getElementById('averageRating').textContent = '-';
+            }
+        }
+
+        // ===============================
+        // NOTIFICHE
+        // ===============================
+        
+        function showNotification(message, type = 'success') {
+            console.log('📢 NOTIFICA:', message, 'TIPO:', type);
+            
+            try {
+                const notification = document.getElementById('notification');
+                
+                if (!notification) {
+                    console.error('❌ Elemento notification non trovato!');
+                    alert(message);
+                    return;
+                }
+                
+                notification.className = 'notification';
+                notification.textContent = message;
+                
+                if (type === 'error') {
+                    notification.classList.add('error');
+                }
+                
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+                
+            } catch (error) {
+                console.error('❌ Errore notifica:', error);
+                alert(message);
+            }
+        }
+
+        // ===============================
+        // INIZIALIZZAZIONE AUTOMATICA
+        // ===============================
+        
+       // ===============================
+        // BANNER PRIVACY
+        // ===============================
+        
+        function showPrivacyBanner() {
+            const bannerAccepted = localStorage.getItem('privacyBannerAccepted');
+            if (bannerAccepted !== 'true') {
+                const banner = document.createElement('div');
+                banner.className = 'privacy-banner';
+                banner.innerHTML = `
+                    <p>🍪 Questa app non utilizza cookie di tracciamento. I tuoi dati rimangono solo sul tuo dispositivo.</p>
+                    <button class="privacy-accept" onclick="acceptPrivacy()">✅ Ho Capito</button>
+                    <a href="#" class="privacy-link" onclick="showPrivacyInfo()">Informazioni Privacy</a>
+                `;
+                document.body.appendChild(banner);
+                setTimeout(() => banner.classList.add('show'), 500);
+            }
+        }
+        
+        function acceptPrivacy() {
+            localStorage.setItem('privacyBannerAccepted', 'true');
+            const banner = document.querySelector('.privacy-banner');
+            if (banner) {
+                banner.classList.remove('show');
+                setTimeout(() => banner.remove(), 300);
+            }
+        }
+        
+        function showPrivacyInfo() {
+            alert('🔒 PRIVACY INFO:\n\n• Nessun cookie utilizzato\n• Nessun tracking\n• Dati solo sul dispositivo\n• Nessuna raccolta dati personali\n\nLa tua privacy è protetta al 100%!');
+        }
+        
+        // Mostra banner dopo inizializzazione app
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(showPrivacyBanner, 2000);
+        });
+function apriRicercaGoogle() {
+    const nome = document.getElementById('name').value.trim();
+    const citta = document.getElementById('citta').value.trim();
+    
+    if (!nome) {
+        showNotification('❌ Inserisci almeno il nome del ristorante', 'error');
+        return;
+    }
+    
+    const searchQuery = `${nome} ${citta} ristorante`;
+    const encodedQuery = encodeURIComponent(searchQuery);
+    window.open(`ricerca.html?q=${encodedQuery}`, '_blank');
+}
+
+// ========================================
+// FUNZIONI PULSANTE TORNA SU
+// ========================================
+
+// Mostra/nascondi il pulsante in base allo scroll
+window.addEventListener('scroll', function() {
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+    if (window.pageYOffset > 300) { // Mostra dopo 300px di scroll
+        scrollToTopBtn.classList.add('show');
+    } else {
+        scrollToTopBtn.classList.remove('show');
+    }
+});
+
+// Funzione per tornare su
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+
+    </script>
+ 
+<script>
+// PWA - Service Worker e Installazione
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+            .then((registration) => {
+                console.log('✅ Service Worker registrato:', registration.scope);
+            })
+            .catch((error) => {
+                console.log('⚠️ Service Worker errore:', error);
+            });
+    });
+}
+
+// Gestione installazione PWA
+let deferredPrompt;
+
+window.addEventLis

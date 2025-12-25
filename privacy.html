@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - RistoMemo</title>
+    <meta name="description" content="Privacy Policy di RistoMemo - La tua guida personale ai ristoranti">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .section h2 {
+            color: #ff6b6b;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .section h3 {
+            color: #333;
+            font-size: 20px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .section p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+
+        .section ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .section li {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+            border: 2px solid #28a745;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .highlight-box h4 {
+            color: #155724;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .highlight-box p {
+            color: #155724;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .warning-box p {
+            color: #856404;
+            margin: 0;
+        }
+
+        .contact-info {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .contact-info h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .contact-info p {
+            color: #666;
+            margin: 5px 0;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            color: #666;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .section h2 {
+                font-size: 20px;
+            }
+            
+            .section h3 {
+                font-size: 18px;
+            }
+            
+            .section p, .section li {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-button">
+                ← Torna all'App
+            </a>
+            
+            <div class="app-icon">🍽️</div>
+            <h1>Privacy Policy</h1>
+            <p>RistoMemo - La tua guida personale ai ristoranti</p>
+        </div>
+
+        <div class="content">
+            <div class="highlight-box">
+                <h4>🔒 Privacy First</h4>
+                <p>RistoMemo è progettata per rispettare completamente la tua privacy. Nessun dato personale viene raccolto, trasmesso o memorizzato sui nostri server.</p>
+            </div>
+
+<div class="section">
+                <h2>🧪 Natura del Servizio</h2>
+                <p><strong>Versione Beta:</strong> Questa applicazione è in fase di test pubblico. Funziona completamente ma potrebbero verificarsi piccoli bug che verranno corretti rapidamente. I beta tester contribuiscono a migliorare l'esperienza.</p>
+                
+                <p><strong>Servizio Gratuito:</strong> RistoMemo è e rimarrà sempre <strong>100% gratuita</strong>. Non è previsto alcun modello di business a pagamento, nessun abbonamento, nessuna versione premium.</p>
+                
+                <p><strong>Progetto Hobbistico:</strong> Questa è un'applicazione sviluppata da un singolo individuo come progetto personale, non un servizio commerciale fornito da un'azienda.</p>
+            </div>
+
+            <div class="section">
+                <h2>📱 Informazioni Generali</h2>
+                <p><strong>Nome dell'Applicazione:</strong> RistoMemo</p>
+                <p><strong>Sviluppatore:</strong> Enrico Sarri</p>
+                <p><strong>Versione:</strong> 1.3.0</p>
+                <p><strong>Tipologia:</strong> Progressive Web App (PWA)</p>
+                <p><strong>Data creazione:</strong> 29 Luglio 2024</p>
+                <p><strong>Ultimo aggiornamento:</strong> 22 Ottobre 2025</p>
+            </div>
+
+            <div class="section">
+                <h2>🛡️ Raccolta Dati</h2>
+                <h3>Dati NON Raccolti</h3>
+                <p>RistoMemo <strong>NON raccoglie, memorizza o trasmette</strong> alcun tipo di dato personale, inclusi ma non limitati a:</p>
+                <ul>
+                    <li>Nome, cognome o informazioni personali</li>
+                    <li>Indirizzo email o numero di telefono</li>
+                    <li>Posizione geografica o dati GPS</li>
+                    <li>Informazioni del dispositivo</li>
+                    <li>Dati di navigazione o comportamentali</li>
+                    <li>Cookies di tracciamento</li>
+                    <li>Analytics o statistiche d'uso</li>
+                </ul>
+
+                <h3>Dati Locali</h3>
+                <p>L'app utilizza esclusivamente il <strong>localStorage</strong> del tuo browser per:</p>
+                <ul>
+                    <li>Salvare i ristoranti che inserisci</li>
+                    <li>Memorizzare le tue preferenze</li>
+                    <li>Mantenere le impostazioni dell'app</li>
+                </ul>
+                <p><strong>Importante:</strong> Tutti questi dati rimangono <em>esclusivamente</em> sul tuo dispositivo e non vengono mai trasmessi a server esterni.</p>
+            </div>
+
+            <div class="section">
+                <h2>🍪 Cookie e Tecnologie di Tracciamento</h2>
+                <p>RistoMemo <strong>NON utilizza</strong>:</p>
+                <ul>
+                    <li>Cookie di tracciamento</li>
+                    <li>Cookie di profilazione</li>
+                    <li>Google Analytics</li>
+                    <li>Facebook Pixel</li>
+                    <li>Altre tecnologie di tracciamento</li>
+                </ul>
+                <p>L'app utilizza solo le tecnologie standard del browser (localStorage) per funzionare correttamente.</p>
+            </div>
+
+            <div class="section">
+                <h2>📊 Conformità GDPR</h2>
+                <p>Poiché RistoMemo non raccoglie alcun dato personale, la conformità al GDPR è <strong>automaticamente garantita</strong>:</p>
+                <ul>
+                    <li><strong>Diritto alla portabilità:</strong> Puoi esportare i tuoi dati tramite la funzione backup</li>
+                    <li><strong>Diritto alla cancellazione:</strong> Puoi eliminare i dati cancellando la cache del browser</li>
+                    <li><strong>Diritto di accesso:</strong> Tutti i dati sono visibili nell'app</li>
+                    <li><strong>Diritto di rettifica:</strong> Puoi modificare i dati direttamente nell'app</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ Backup e Responsabilità</h4>
+                <p>I tuoi dati sono salvati solo localmente. Ti consigliamo vivamente di effettuare backup regolari utilizzando la funzione integrata nell'app. Non siamo responsabili per la perdita di dati dovuta a cancellazione della cache, disinstallazione dell'app o problemi tecnici del dispositivo.</p>
+            </div>
+
+            <div class="section">
+                <h2>🔄 Aggiornamenti alla Privacy Policy</h2>
+                <p>Eventuali modifiche a questa Privacy Policy saranno comunicate attraverso:</p>
+                <ul>
+                    <li>Aggiornamento di questa pagina</li>
+                    <li>Notifica nell'app alla prossima apertura</li>
+                </ul>
+                <p>L'uso continuato dell'app dopo le modifiche costituisce accettazione della nuova policy.</p>
+            </div>
+
+            <div class="section">
+                <h2>⚖️ Base Legale</h2>
+                <p>Il trattamento (locale) dei dati inseriti dall'utente si basa sull'<strong>interesse legittimo</strong> di fornire un servizio gratuito di gestione personale dei ristoranti, senza alcuna raccolta di dati verso terzi.</p>
+            </div>
+
+               
+               <div class="section">
+                <h2>💝 Donazioni Volontarie</h2>
+                <p>RistoMemo offre la possibilità di supportare volontariamente lo sviluppo tramite donazioni PayPal.</p>
+                
+                <div class="warning-box" style="margin-top: 15px;">
+                    <h4>⚠️ Importante</h4>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        <li style="margin-bottom: 8px;">Le donazioni sono completamente <strong>facoltative</strong> e non forniscono vantaggi o funzioni aggiuntive</li>
+                        <li style="margin-bottom: 8px;">Il trattamento dei dati di pagamento è gestito esclusivamente da <strong>PayPal Inc.</strong>, che agisce come responsabile autonomo</li>
+                        <li style="margin-bottom: 8px;">RistoMemo <strong>non raccoglie, memorizza o elabora</strong> alcun dato finanziario o di pagamento</li>
+                        <li style="margin-bottom: 8px;">Non viene creato alcun database dei donatori né effettuato alcun tracciamento</li>
+                        <li style="margin-bottom: 0;">Per informazioni sul trattamento dei dati di pagamento: <a href="https://www.paypal.com/it/webapps/mpp/ua/privacy-full" target="_blank" style="color: #856404; text-decoration: underline; font-weight: 600;">Privacy Policy PayPal</a></li>
+                    </ul>
+                </div>
+                
+                <p style="margin-top: 15px;">Eventuali comunicazioni di ringraziamento per donazioni ricevute costituiscono un contatto occasionale e non richiedono consenso GDPR specifico.</p>
+            </div>
+
+
+            <div class="contact-info">
+                <h4>📧 Contatti per la Privacy</h4>
+                <p><strong>Titolare del Trattamento:</strong> Enrico Sarri</p>
+                <p><strong>Email:</strong> help.enricosarri@gmail.com</p>
+                <p><em>Nota: Trattandosi di un'app che non raccoglie dati, il supporto è limitato.</em></p>
+            </div>
+
+           
+<div class="section">
+                <h2>🛠️ Servizi di Terze Parti</h2>
+                <p>RistoMemo può utilizzare i seguenti servizi esterni <strong>solo quando esplicitamente richiesto dall'utente</strong>:</p>
+                <ul>
+                    <li><strong>Google Maps:</strong> Per visualizzare la posizione dei ristoranti (solo se clicchi sui link "Visualizza su Mappa")</li>
+                    <li><strong>Google Search:</strong> Per cercare informazioni sui ristoranti (solo se clicchi sul pulsante "Cerca su Google")</li>
+                    <li><strong>Email Client:</strong> Per inviare backup via email (solo se utilizzi la funzione backup via email)</li>
+                    <li><strong>PayPal:</strong> Per donazioni volontarie (solo se scegli di supportare lo sviluppo). PayPal gestisce autonomamente i dati di pagamento secondo la propria privacy policy</li>
+                </ul>
+                <p><strong>Importante:</strong> Questi servizi hanno le proprie privacy policy indipendenti da RistoMemo. RistoMemo non ha alcun controllo sui dati trattati da questi servizi esterni.</p>
+            </div>
+      </div>
+
+        <div class="footer">
+            <p><strong>© 2025 Enrico Sarri - Tutti i diritti riservati</strong></p>
+            <p>RistoMemo v1.2.0 Beta - Privacy Policy creata il 29/07/2024, aggiornata al 22/10/2025</p>
+            <p style="margin-top: 15px;">
+                <a href="index.html" style="background: #ff6b6b; color: white; padding: 12px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; display: inline-block;">
+                    🍽️ Torna a RistoMemo
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Traccia visualizzazione privacy policy (solo locale)
+        console.log('📋 Privacy Policy visualizzata:', new Date().toISOString());
+        
+        // Funzione per tornare all'app
+        function goBackToApp() {
+            window.location.href = 'index.html';
+        }
+        
+        // Gestione tasto back del browser
+        window.addEventListener('popstate', function(event) {
+            goBackToApp();
+        });
+    </script>
+</body>
+</html>
