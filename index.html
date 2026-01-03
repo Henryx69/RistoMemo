@@ -8,6 +8,10 @@
 <link rel="apple-touch-icon" href="salvaristo_icon512.png">
 <meta name="theme-color" content="#ff6666">
 
+<!-- Leaflet per le mappe -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <!-- Privacy Policy Inline -->
     <style>
         .privacy-banner {
@@ -943,6 +947,69 @@ DATA CREAZIONE: 29/07/2025
         #scrollToTopBtn:active {
             transform: translateY(-1px);
         }
+
+/* ========================================= */
+        /* MAPPA RISTORANTI VICINI */
+        /* ========================================= */
+        
+        #mapContainer {
+            display: none;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .nearby-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .nearby-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nearby-results {
+            margin-top: 15px;
+        }
+
+        .nearby-item {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            background: #fafafa;
+        }
+
+        .nearby-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .nearby-distance {
+            color: #666;
+            font-size: 14px;
+        }
+
     </style>
 </head>
 <body>
@@ -1129,6 +1196,33 @@ RistoMemo è completamente funzionale. Nuove funzionalità vengono aggiunte rego
                     <div class="form-group">
                         <label for="indirizzo">Indirizzo (opzionale)</label>
                         <input type="text" id="indirizzo" placeholder="Via, numero civico...">
+                    </div>
+
+                    <!-- Coordinate GPS -->
+                    <div class="form-group" style="background: #f0f8ff; padding: 12px; border-radius: 8px; border: 1px solid #d0e8ff;">
+                        <label style="display: block; margin-bottom: 8px;">
+                            <strong>📍 Coordinate GPS</strong>
+                            <span style="font-size: 12px; color: #666; font-weight: normal;"><br>
+                                Necessarie per la mappa "Ristoranti Vicini"
+                            </span>
+                        </label>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                            <div>
+                                <label for="lat" style="font-size: 12px; color: #666;">Latitudine</label>
+                                <input type="text" id="lat" readonly placeholder="--" style="background: #fff; font-size: 13px;">
+                            </div>
+                            <div>
+                                <label for="lon" style="font-size: 12px; color: #666;">Longitudine</label>
+                                <input type="text" id="lon" readonly placeholder="--" style="background: #fff; font-size: 13px;">
+                            </div>
+                        </div>
+                        
+                        <button type="button" class="btn btn-small" onclick="trovaCoordinate()" style="width: 100%; background: #4CAF50;">
+                            🔍 Trova Coordinate Automaticamente
+                        </button>
+                        
+                        <div id="geocodeStatus" style="margin-top: 8px; font-size: 12px; text-align: center;"></div>
                     </div>
 
                     <div class="form-group">
@@ -1320,7 +1414,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
                         
                         <p style="margin-bottom: 8px;"><strong>🆓 Progetto Hobbistico:</strong> È un progetto personale gratuito, non un servizio commerciale. Fai il backup dei tuoi ristoranti preferiti!</p>
                         
-                        <p style="margin: 0;"><strong>📧 Problemi?</strong> <a href="mailto:help.enricosarri@gmail.com" style="color: #ff6b6b; text-decoration: none; font-weight: 600;">Scrivimi qui</a></p>
+                        <p style="margin: 0;"><strong>📧 Problemi?</strong> <a href="/cdn-cgi/l/email-protection#c6aea3aab6e8a3a8b4afa5a9b5a7b4b4af86a1aba7afaae8a5a9ab" style="color: #ff6b6b; text-decoration: none; font-weight: 600;">Scrivimi qui</a></p>
                     </div>
 
                    <!-- Copyright apertura -->
@@ -1330,7 +1424,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         🧪 <strong>RistoMemo</strong> • 💯 <strong>Sempre Gratuita</strong>
     </p>
     <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
-        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+        <a href="/cdn-cgi/l/email-protection#2a424f465a044f4458434945594b5858436a4d474b43460449454715595f48404f495e176c4f4f4e484b49410a7843595e45674f4745" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
     </p>
 </div>
 
@@ -1351,7 +1445,23 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
                     <div class="filter-row" style="margin-bottom: 10px;">
                         <input type="text" id="searchByName" placeholder="🔍 Cerca per nome ristorante..." 
                                style="width: 100%; padding: 10px; border: 2px solid #e9ecef; border-radius: 6px; font-size: 15px;">
+
+
                     </div>
+
+<!-- Bottone Ristoranti Vicini -->
+<button class="nearby-btn" onclick="trovaRistorantiVicini()">
+    📍 Trova Ristoranti Vicini
+</button>
+
+<!-- Contenitore Mappa -->
+<div id="mapContainer">
+    <button onclick="chiudiMappa()" style="width: 100%; padding: 12px; background: #ff6b6b; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; margin-bottom: 15px;">
+        ❌ Chiudi Mappa
+    </button>
+    <div id="map"></div>
+    <div id="nearbyResults" class="nearby-results"></div>
+</div>
                     
                     <!-- Filtri principali molto compatti -->
                     <div style="display: flex; flex-direction: column; gap: 5px;">
@@ -1469,7 +1579,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         </a>
     </p>
 <p style="margin: 5px 0 0 0; font-size: 10px;">
-    📧 Supporto: <a href="mailto:help.enricosarri@gmail.com" style="color: #667eea; text-decoration: none;">help.enricosarri@gmail.com</a>
+    📧 Supporto: <a href="/cdn-cgi/l/email-protection#1e767b726e307b706c777d716d7f6c6c775e79737f7772307d7173" style="color: #667eea; text-decoration: none;"><span class="__cf_email__" data-cfemail="cda5a8a1bde3a8a3bfa4aea2beacbfbfa48daaa0aca4a1e3aea2a0">[email&#160;protected]</span></a>
 </p>
 </div>
 <!-- Reminder Beta/Gratuita -->
@@ -1478,7 +1588,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         🧪 <strong>RistoMemo</strong> • 💯 <strong>Sempre Gratuita</strong>
     </p>
     <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
-        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+        <a href="/cdn-cgi/l/email-protection#5139343d217f343f2338323e223023233811363c30383d7f323e3c6e2224333b3432256c173434353330323a71033822253e1c343c3e" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
     </p>
 </div>
             </div>
@@ -1618,7 +1728,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         🧪 <strong>RistoMemo</strong> • 💯 <strong>Sempre Gratuita</strong>
     </p>
     <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
-        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+        <a href="/cdn-cgi/l/email-protection#620a070e124c070c100b010d110310100b22050f030b0e4c010d0f5d111700080701165f240707060003010942300b11160d2f070f0d" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
     </p>
 </div>
                 <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 15px; text-align: center; font-size: 11px; color: #666;">
@@ -1642,7 +1752,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
             </p>
             <p style="margin: 8px 0 0 0; color: #555; font-size: 13px;">
                 <strong>Hai trovato un bug o hai suggerimenti?</strong><br>
-                <a href="mailto:help.enricosarri@gmail.com?subject=Bug/Suggerimento RistoMemo" style="color: #667eea; text-decoration: none; font-weight: 600;">📧 Scrivimi qui</a>
+                <a href="/cdn-cgi/l/email-protection#3f575a534f115a514d565c504c5e4d4d567f58525e5653115c5052004c4a5d555a5c4b027d4a58106c4a58585a4d56525a514b501f6d564c4b50725a5250" style="color: #667eea; text-decoration: none; font-weight: 600;">📧 Scrivimi qui</a>
             </p>
         </div>
         
@@ -1666,7 +1776,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         <strong>💳 Supporta tramite PayPal:</strong>
     </p>
     <p style="margin: 0; color: #0070ba; font-size: 15px; font-weight: 600;">
-        📧 <a href="mailto:enricosarri69@gmail.com" style="color: #0070ba; text-decoration: none;">enricosarri69@gmail.com</a>
+        📧 <a href="/cdn-cgi/l/email-protection#e5808b978c868a968497978cd3dca58288848c89cb868a88" style="color: #0070ba; text-decoration: none;"><span class="__cf_email__" data-cfemail="b3d6ddc1dad0dcc0d2c1c1da858af3d4ded2dadf9dd0dcde">[email&#160;protected]</span></a>
     </p>
     <p style="margin: 8px 0 0 0; color: #999; font-size: 12px; font-style: italic;">
         (Invia tramite la tua app PayPal)
@@ -1758,7 +1868,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
                         <strong>Archiviazione:</strong> Tutti i dati rimangono sul tuo dispositivo (localStorage).
                     </p>
                     <p style="font-size: 14px; line-height: 1.5;">
-  <strong>Responsabile:</strong> Enrico Sarri (<a href="mailto:help.enricosarri@gmail.com" style="color: #667eea; text-decoration: none;">help.enricosarri@gmail.com</a>)
+  <strong>Responsabile:</strong> Enrico Sarri (<a href="/cdn-cgi/l/email-protection#deb6bbb2aef0bbb0acb7bdb1adbfacacb79eb9b3bfb7b2f0bdb1b3" style="color: #667eea; text-decoration: none;"><span class="__cf_email__" data-cfemail="fe969b928ed09b908c979d918d9f8c8c97be99939f9792d09d9193">[email&#160;protected]</span></a>)
 
 
 <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
@@ -1781,7 +1891,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
         🧪 <strong>RistoMemo</strong> • 💯 <strong>Sempre Gratuita</strong>
     </p>
     <p style="margin: 5px 0 0 0; font-size: 11px; color: #999;">
-        <a href="mailto:help.enricosarri@gmail.com?subject=Feedback RistoMemo" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
+        <a href="/cdn-cgi/l/email-protection#82eae7eef2ace7ecf0ebe1edf1e3f0f0ebc2e5efe3ebeeace1edefbdf1f7e0e8e7e1f6bfc4e7e7e6e0e3e1e9a2d0ebf1f6edcfe7efed" style="color: #667eea; text-decoration: none;">Invia Feedback</a>
     </p>
 </div>
 
@@ -1801,7 +1911,7 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
     <div id="notification" class="notification"></div>
 
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // ===============================
         // SISTEMA CACHE BUSTING AGGRESSIVO
         // ===============================
@@ -1817,7 +1927,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 document.addEventListener('selectstart', function(e) {
-    if (!e.target.matches('input, textarea, select')) {
+    if (e.target && e.target.matches && !e.target.matches('input, textarea, select')) {
         e.preventDefault();
     }
 });
@@ -2291,6 +2401,8 @@ document.addEventListener('selectstart', function(e) {
                     regione: regione,
                     citta: document.getElementById('citta').value.trim(),
                     indirizzo: document.getElementById('indirizzo').value.trim(),
+                    lat: document.getElementById('lat').value ? parseFloat(document.getElementById('lat').value) : null,
+                    lon: document.getElementById('lon').value ? parseFloat(document.getElementById('lon').value) : null,
                     telefono: document.getElementById('telefono').value.trim(),
                     rating: document.getElementById('rating').value,
                     cucina: document.getElementById('cucina').value,
@@ -2372,6 +2484,9 @@ document.getElementById('name').value = '';
 document.getElementById('regione').value = '';
 document.getElementById('citta').value = '';
 document.getElementById('indirizzo').value = '';
+document.getElementById('lat').value = '';
+document.getElementById('lon').value = '';
+document.getElementById('geocodeStatus').innerHTML = '';
 document.getElementById('telefono').value = '';
 document.getElementById('rating').value = '';
 document.getElementById('cucina').value = '';
@@ -2947,6 +3062,8 @@ console.log('🔍 DEBUG: Ristorante da modificare:', restaurant);
             document.getElementById('regione').value = restaurant.regione || '';
             document.getElementById('citta').value = restaurant.citta || '';
             document.getElementById('indirizzo').value = restaurant.indirizzo || '';
+            document.getElementById('lat').value = restaurant.lat || '';
+            document.getElementById('lon').value = restaurant.lon || '';
             document.getElementById('telefono').value = restaurant.telefono || '';
             document.getElementById('rating').value = restaurant.rating || '';
             document.getElementById('cucina').value = restaurant.cucina || '';
@@ -3037,6 +3154,9 @@ if (googleSearchBtn) {
         function cancelEdit() {
             editingId = null;
             document.getElementById('restaurantForm').reset();
+            
+            // Pulisci anche il messaggio geocoding
+            document.getElementById('geocodeStatus').innerHTML = '';
             
             clearAllCheckboxStyles();
             setTimeout(() => {
@@ -3598,6 +3718,8 @@ Questo è il backup automatico del RistoMemo del ${new Date().toLocaleDateString
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(showPrivacyBanner, 2000);
         });
+
+// Funzione ricerca Google
 function apriRicercaGoogle() {
     const nome = document.getElementById('name').value.trim();
     const citta = document.getElementById('citta').value.trim();
@@ -3613,20 +3735,268 @@ function apriRicercaGoogle() {
 }
 
 // ========================================
+// FUNZIONI MAPPA RISTORANTI VICINI
+// ========================================
+
+let mapInstance = null;
+
+// GEOCODING con Nominatim (OpenStreetMap) - GRATUITO
+function trovaCoordinate() {
+    const nome = document.getElementById('name').value.trim();
+    const indirizzo = document.getElementById('indirizzo').value.trim();
+    const citta = document.getElementById('citta').value.trim();
+    const regione = document.getElementById('regione').value;
+    
+    const statusDiv = document.getElementById('geocodeStatus');
+    
+    // Costruisci query di ricerca
+    let query = '';
+    if (indirizzo) {
+        query = `${indirizzo}, ${citta}, ${regione}, Italia`;
+    } else if (citta) {
+        query = `${nome}, ${citta}, ${regione}, Italia`;
+    } else {
+        statusDiv.innerHTML = '<span style="color: #ff6b6b;">❌ Compila almeno Città o Indirizzo</span>';
+        return;
+    }
+    
+    statusDiv.innerHTML = '<span style="color: #667eea;">🔍 Cerco coordinate...</span>';
+    
+    // Chiamata API Nominatim (gratuita!)
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+    
+    fetch(url, {
+        headers: {
+            'User-Agent': 'RistoMemo App' // Richiesto da Nominatim
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data && data.length > 0) {
+            const lat = parseFloat(data[0].lat);
+            const lon = parseFloat(data[0].lon);
+            
+            document.getElementById('lat').value = lat.toFixed(6);
+            document.getElementById('lon').value = lon.toFixed(6);
+            
+            statusDiv.innerHTML = '<span style="color: #4CAF50;">✅ Coordinate trovate!</span>';
+            
+            showNotification('✅ Coordinate GPS trovate!', 'success');
+        } else {
+            statusDiv.innerHTML = '<span style="color: #ff6b6b;">❌ Nessun risultato. Verifica indirizzo</span>';
+            showNotification('❌ Coordinate non trovate. Verifica i dati inseriti', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Errore geocoding:', error);
+        statusDiv.innerHTML = '<span style="color: #ff6b6b;">❌ Errore di rete</span>';
+        showNotification('❌ Errore nella ricerca coordinate', 'error');
+    });
+}
+
+// Chiudi la mappa e torna alla lista normale
+function chiudiMappa() {
+    const mapContainer = document.getElementById('mapContainer');
+    mapContainer.style.display = 'none';
+    
+    // Rimuovi istanza mappa per liberare memoria
+    if (mapInstance) {
+        mapInstance.remove();
+        mapInstance = null;
+    }
+    
+    // Pulisci risultati
+    document.getElementById('nearbyResults').innerHTML = '';
+}
+
+// Calcola distanza tra due punti (formula Haversine)
+function calcolaDistanza(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Raggio della Terra in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+}
+
+// Aggiungi marker ristoranti sulla mappa
+function aggiungiRistorantiMappa(ristoranti, map) {
+    ristoranti.forEach((rist, index) => {
+        if (rist.lat && rist.lon) {
+            const numero = index + 1;
+            
+            // Marker con numero personalizzato
+            const customIcon = L.divIcon({
+                html: `
+                    <div style="
+                        background: #ff6b6b;
+                        color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 50% 50% 50% 0;
+                        border: 3px solid white;
+                        box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        font-size: 16px;
+                        transform: rotate(-45deg);
+                    ">
+                        <span style="transform: rotate(45deg);">${numero}</span>
+                    </div>
+                `,
+                className: 'custom-marker',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32],
+                popupAnchor: [0, -32]
+            });
+            
+            L.marker([rist.lat, rist.lon], {
+                icon: customIcon
+            }).addTo(map).bindPopup(`
+                <strong>#${numero} - ${rist.name}</strong><br>
+                ${rist.indirizzo || rist.citta || 'Nessun indirizzo'}<br>
+                <em>${rist.distanza.toFixed(2)} km</em>
+            `);
+        }
+    });
+}
+
+// Funzione principale per trovare ristoranti vicini
+function trovaRistorantiVicini() {
+    if (!navigator.geolocation) {
+        alert('❌ Geolocalizzazione non supportata dal tuo browser');
+        return;
+    }
+
+    showNotification('🔍 Cerco la tua posizione...', 'info');
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+
+            // Carica ristoranti dal localStorage
+            const restaurants = JSON.parse(localStorage.getItem('myRestaurants')) || [];
+
+            // Filtra solo ristoranti con coordinate e calcola distanza
+            const ristoratiConDistanza = restaurants
+                .filter(r => r.lat && r.lon)
+                .map(r => ({
+                    ...r,
+                    distanza: calcolaDistanza(userLat, userLon, r.lat, r.lon)
+                }))
+                .sort((a, b) => a.distanza - b.distanza);
+
+            if (ristoratiConDistanza.length === 0) {
+                showNotification('❌ Nessun ristorante con coordinate GPS trovato', 'error');
+                return;
+            }
+
+            // Mostra container mappa
+            const mapContainer = document.getElementById('mapContainer');
+            mapContainer.style.display = 'block';
+
+            // Inizializza mappa
+            if (mapInstance) {
+                mapInstance.remove();
+            }
+
+            mapInstance = L.map('map').setView([userLat, userLon], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(mapInstance);
+
+            // Marker posizione utente
+            L.marker([userLat, userLon], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(mapInstance).bindPopup('📍 Sei qui!').openPopup();
+
+            // Aggiungi ristoranti
+            aggiungiRistorantiMappa(ristoratiConDistanza, mapInstance);
+
+            // Mostra lista risultati
+            const resultsDiv = document.getElementById('nearbyResults');
+            let html = '<h3 style="margin-bottom: 10px;">Ristoranti trovati:</h3>';
+            ristoratiConDistanza.slice(0, 10).forEach((r, index) => {
+                const numero = index + 1;
+                html += `
+                    <div class="nearby-item">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="
+                                background: #ff6b6b;
+                                color: white;
+                                width: 28px;
+                                height: 28px;
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-weight: bold;
+                                flex-shrink: 0;
+                            ">${numero}</div>
+                            <div style="flex: 1;">
+                                <div class="nearby-name">${r.name}</div>
+                                <div style="font-size: 13px; color: #666;">${r.indirizzo || r.citta || ''}</div>
+                                <div class="nearby-distance">📍 ${r.distanza.toFixed(2)} km di distanza</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            resultsDiv.innerHTML = html;
+
+            showNotification(`✅ Trovati ${ristoratiConDistanza.length} ristoranti!`, 'success');
+
+            // Scroll alla mappa
+            mapContainer.scrollIntoView({ behavior: 'smooth' });
+        },
+        function(error) {
+            let messaggio = 'Errore geolocalizzazione: ';
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    messaggio += 'Hai negato il permesso';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    messaggio += 'Posizione non disponibile';
+                    break;
+                case error.TIMEOUT:
+                    messaggio += 'Timeout';
+                    break;
+                default:
+                    messaggio += 'Errore sconosciuto';
+            }
+            showNotification('❌ ' + messaggio, 'error');
+        }
+    );
+}
+
+// ========================================
 // FUNZIONI PULSANTE TORNA SU
 // ========================================
 
-// Mostra/nascondi il pulsante in base allo scroll
-window.addEventListener('scroll', function() {
-    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
-    if (window.pageYOffset > 300) { // Mostra dopo 300px di scroll
-        scrollToTopBtn.classList.add('show');
+window.onscroll = function() {
+    const btn = document.getElementById('scrollToTopBtn');
+    if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+        btn.classList.add('show');
     } else {
-        scrollToTopBtn.classList.remove('show');
+        btn.classList.remove('show');
     }
-});
+};
 
-// Funzione per tornare su
 function scrollToTop() {
     window.scrollTo({
         top: 0,
@@ -3635,22 +4005,5 @@ function scrollToTop() {
 }
 
     </script>
- 
-<script>
-// PWA - Service Worker e Installazione
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-            .then((registration) => {
-                console.log('✅ Service Worker registrato:', registration.scope);
-            })
-            .catch((error) => {
-                console.log('⚠️ Service Worker errore:', error);
-            });
-    });
-}
-
-// Gestione installazione PWA
-let deferredPrompt;
-
-window.addEventLis
+</body>
+</html>
