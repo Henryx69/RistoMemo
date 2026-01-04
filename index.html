@@ -8,10 +8,6 @@
 <link rel="apple-touch-icon" href="salvaristo_icon512.png">
 <meta name="theme-color" content="#ff6666">
 
-<!-- Leaflet per le mappe -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
     <!-- Privacy Policy Inline -->
     <style>
         .privacy-banner {
@@ -1203,18 +1199,19 @@ RistoMemo è completamente funzionale. Nuove funzionalità vengono aggiunte rego
                         <label style="display: block; margin-bottom: 8px;">
                             <strong>📍 Coordinate GPS</strong>
                             <span style="font-size: 12px; color: #666; font-weight: normal;"><br>
-                                Necessarie per la mappa "Ristoranti Vicini"
+                                Necessarie per la mappa "Ristoranti Vicini"<br>
+                                <em style="color: #667eea;">Puoi inserirle manualmente o cercarle automaticamente</em>
                             </span>
                         </label>
                         
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
                             <div>
                                 <label for="lat" style="font-size: 12px; color: #666;">Latitudine</label>
-                                <input type="text" id="lat" readonly placeholder="--" style="background: #fff; font-size: 13px;">
+                                <input type="text" id="lat" placeholder="es. 42.1645" style="background: #fff; font-size: 13px;">
                             </div>
                             <div>
                                 <label for="lon" style="font-size: 12px; color: #666;">Longitudine</label>
-                                <input type="text" id="lon" readonly placeholder="--" style="background: #fff; font-size: 13px;">
+                                <input type="text" id="lon" placeholder="es. 12.1673" style="background: #fff; font-size: 13px;">
                             </div>
                         </div>
                         
@@ -3739,6 +3736,42 @@ function apriRicercaGoogle() {
 // ========================================
 
 let mapInstance = null;
+let leafletLoaded = false;
+
+// Carica Leaflet dinamicamente solo quando serve
+function loadLeaflet() {
+    return new Promise((resolve, reject) => {
+        // Se già caricato, risolvi subito
+        if (leafletLoaded && typeof L !== 'undefined') {
+            resolve();
+            return;
+        }
+
+        // Controlla se c'è internet
+        if (!navigator.onLine) {
+            reject(new Error('Connessione internet necessaria per la mappa'));
+            return;
+        }
+
+        // Carica CSS
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+        document.head.appendChild(link);
+
+        // Carica JavaScript
+        const script = document.createElement('script');
+        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        script.onload = () => {
+            leafletLoaded = true;
+            resolve();
+        };
+        script.onerror = () => {
+            reject(new Error('Errore nel caricamento della libreria mappa'));
+        };
+        document.head.appendChild(script);
+    });
+}
 
 // GEOCODING con Nominatim (OpenStreetMap) - GRATUITO
 function trovaCoordinate() {
@@ -3748,6 +3781,13 @@ function trovaCoordinate() {
     const regione = document.getElementById('regione').value;
     
     const statusDiv = document.getElementById('geocodeStatus');
+    
+    // Controlla connessione internet
+    if (!navigator.onLine) {
+        statusDiv.innerHTML = '<span style="color: #ff6b6b;">❌ Connessione internet necessaria</span>';
+        showNotification('❌ Serve connessione internet per trovare le coordinate', 'error');
+        return;
+    }
     
     // Costruisci query di ricerca
     let query = '';
@@ -3867,9 +3907,24 @@ function aggiungiRistorantiMappa(ristoranti, map) {
 }
 
 // Funzione principale per trovare ristoranti vicini
-function trovaRistorantiVicini() {
+async function trovaRistorantiVicini() {
     if (!navigator.geolocation) {
         alert('❌ Geolocalizzazione non supportata dal tuo browser');
+        return;
+    }
+
+    // Controlla connessione internet
+    if (!navigator.onLine) {
+        showNotification('❌ Connessione internet necessaria per la mappa', 'error');
+        return;
+    }
+
+    // Carica Leaflet se necessario
+    showNotification('🔍 Caricamento mappa...', 'info');
+    try {
+        await loadLeaflet();
+    } catch (error) {
+        showNotification('❌ ' + error.message, 'error');
         return;
     }
 
@@ -4003,7 +4058,24 @@ function scrollToTop() {
         behavior: 'smooth'
     });
 }
+// ========================================
+// REGISTRAZIONE SERVICE WORKER (PWA OFFLINE)
+// ========================================
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('✅ Service Worker registrato:', registration.scope);
+            })
+            .catch(error => {
+                console.log('❌ Service Worker fallito:', error);
+            });
+    });
+}
 
+    </script>
+</body>
+</html>
     </script>
 </body>
 </html>
