@@ -3,7 +3,7 @@
 La tua agenda personale dei ristoranti
 
 RistoMemo è una web app **privacy-first** che ti permette di salvare e organizzare i tuoi ristoranti preferiti.  
-Funziona **100% offline**: tutti i dati restano **esclusivamente sul tuo dispositivo**.
+Funziona **100% offline**: tutti i dati restano esclusivamente sul tuo dispositivo.
 
 ---
 
@@ -47,11 +47,11 @@ https://github.com/Henryx69/RistoMemo
 RistoMemo **non raccoglie alcun dato personale**.  
 Tutte le informazioni vengono salvate localmente sul dispositivo dell’utente tramite `localStorage`.
 
-- Nessun server
-- Nessun tracking
-- Nessuna analitica
+- Nessun server  
+- Nessun tracking  
+- Nessuna analitica  
 
-👉 Leggi la **Privacy Policy completa**:  
+👉 Privacy Policy completa:  
 https://ristomemo.netlify.app/privacy.html
 
 ---
