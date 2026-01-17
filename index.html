@@ -1506,10 +1506,10 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
 <!-- Pulsanti Ristoranti Vicini -->
 <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
     <button class="nearby-btn" onclick="trovaRistorantiVicini()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
-        🏠 RISTORANTI REGISTRATI VICINI
+        🏠 MAPPA DEI MIEI RISTORANTI
     </button>
     <button class="nearby-btn" onclick="trovaAltriRistorantiVicini()" style="background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);">
-        🌍 TROVA ALTRI RISTORANTI
+        🌍 MAPPA DI ALTRI RISTORANTI
     </button>
 </div>
 
@@ -1523,19 +1523,6 @@ RistoMemo è open source su GitHub. Gli sviluppatori possono contribuire, miglio
  <div id="map"></div>
 
 <!-- Selettore modalità risultati -->
-<div id="nearbyModeSelector" style="margin: 10px 0; text-align: center;">
-    <button id="modeInternal" class="nearby-mode active">
-        ✔ I miei ristoranti
-    </button>
-    <button id="modeGoogle" class="nearby-mode">
-        ⭐ Consigliati (Google)
-    </button>
-
-    <p style="font-size: 11px; color: #666; margin-top: 6px;">
-        La posizione viene usata solo per mostrare ristoranti vicini
-        o per aprire Google Maps.
-    </p>
-</div>
 
 <div id="nearbyResults" class="nearby-results"></div>
 
