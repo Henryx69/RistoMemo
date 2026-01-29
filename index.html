@@ -883,9 +883,20 @@ DATA CREAZIONE: 29/07/2025
             min-height: 44px;
         }
 
-        .btn-accept {
+       .btn-accept {
             background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
+        }
+
+        .btn-accept:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .btn-accept:disabled:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         .btn-accept:hover, .btn-accept:active {
@@ -1016,14 +1027,17 @@ DATA CREAZIONE: 29/07/2025
 
     <!-- Pulsante Torna Su -->
     <button id="scrollToTopBtn" onclick="scrollToTop()" title="Torna su">↑</button>
-    
     <!-- Terms Modal (visibile all'apertura) -->
     <div id="termsModal" class="terms-modal">
         <div class="terms-modal-content">
             <div class="terms-header">
                 <h2>📋 TERMINI DI UTILIZZO</h2>
                 <h3>RistoMemo</h3>
+<p style="font-size: 15px; color: white; font-weight: 500; margin-top: 10px; line-height: 1.4; opacity: 0.95;">
+                    RistoMemo è un'app per catalogare i tuoi ristoranti preferiti.
+                </p>
             </div>
+
             
             <div class="terms-body">
                
@@ -1111,7 +1125,7 @@ Non è prevista alcuna forma di responsabilità o risarcimento per eventuali dan
 </body>    
         
             <div class="terms-buttons">
-                <button id="acceptTerms" class="btn-accept">
+                <button id="acceptTerms" class="btn-accept" disabled>
                     ✅ Accetto i Termini
                 </button>
                 <button id="declineTerms" class="btn-decline">
@@ -2091,9 +2105,25 @@ document.addEventListener('selectstart', function(e) {
                 declineBtn.onclick = null;
                 declineBtn.removeEventListener('click', declineTerms);
                 declineBtn.addEventListener('click', declineTerms);
-                declineBtn.onclick = declineTerms;
+              declineBtn.onclick = declineTerms;
             }
             
+            // Gestione scroll per abilitare il pulsante
+            const termsBody = document.querySelector('.terms-body');
+            if (termsBody && acceptBtn) {
+                termsBody.addEventListener('scroll', function() {
+                    const scrollTop = termsBody.scrollTop;
+                    const scrollHeight = termsBody.scrollHeight;
+                    const clientHeight = termsBody.clientHeight;
+                    
+                    // Abilita il pulsante quando si è a 50px dalla fine
+                    if (scrollTop + clientHeight >= scrollHeight - 50) {
+                        acceptBtn.disabled = false;
+                    }
+                });
+            }
+            
+                        
             // // console.log('📋 Modal termini mostrato con gestori eventi Firefox-safe');
         }
         
