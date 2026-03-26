@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termini di Utilizzo - RistoMemo FREE</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="512x512" href="salvaristo_icon512.png">
+    <link rel="apple-touch-icon" href="salvaristo_icon512.png">
+    <meta name="theme-color" content="#ff6b6b">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .terms-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 95%;
+            max-width: 500px;
+            max-height: calc(100vh - 40px);
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        .terms-header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+            flex-shrink: 0;
+        }
+        .terms-header h2 { margin: 0 0 5px 0; font-size: 18px; font-weight: 700; }
+        .terms-header h3 { margin: 0; font-size: 14px; opacity: 0.9; font-weight: 500; }
+        .terms-body {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
+        }
+        .terms-section { margin-bottom: 18px; padding-bottom: 15px; border-bottom: 1px solid #f0f0f0; }
+        .terms-section:last-child { border-bottom: none; margin-bottom: 0; }
+        .terms-section h4 { color: #333; margin: 0 0 8px 0; font-size: 15px; font-weight: 600; }
+        .terms-section ul { margin: 0; padding-left: 18px; }
+        .terms-section li { margin-bottom: 6px; line-height: 1.4; color: #555; font-size: 14px; }
+        .terms-footer { background: #f8f9fa; padding: 12px 15px; border-radius: 8px; text-align: center; margin-top: 15px; }
+        .terms-footer p { margin: 3px 0; font-size: 14px; }
+        .terms-date { font-size: 12px; color: #666; }
+        .terms-buttons {
+            padding: 15px 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 0 0 20px 20px;
+            flex-shrink: 0;
+        }
+        .btn-accept, .btn-decline {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 180px;
+            min-height: 44px;
+        }
+        .btn-accept { background: linear-gradient(45deg, #28a745, #20c997); color: white; }
+        .btn-accept:hover, .btn-accept:active { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40,167,69,0.3); }
+        .btn-decline { background: linear-gradient(45deg, #dc3545, #c82333); color: white; }
+        .btn-decline:hover, .btn-decline:active { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(220,53,69,0.3); }
+    </style>
+</head>
+<body>
+    <div class="terms-modal-content">
+        <div class="terms-header">
+            <h2>📋 TERMINI DI UTILIZZO</h2>
+            <h3>RistoMemo FREE</h3>
+        </div>
+
+        <div class="terms-body">
+            <div class="terms-section">
+                <h4 style="color: #dc3545; font-weight: 700; margin-bottom: 15px;">⚠️ AVVISO IMPORTANTE</h4>
+                <div style="background: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
+                    <p><strong>✨ Versione Stabile</strong></p>
+                    <p style="margin-top:8px;"><strong>🌟 Progetto Open Source</strong><br>
+                    RistoMemo è open source su GitHub.
+                    <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color: #ff6b6b;">Vai al repository</a></p>
+                    <p style="margin-top:8px;"><strong>Applicazione hobbistica gratuita sviluppata da una persona fisica, senza scopo di lucro. Non costituisce un servizio commerciale né professionale. L'utilizzo avviene a proprio rischio.</strong></p>
+                </div>
+            </div>
+
+            <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #0066cc; margin-bottom: 15px;">
+                <p style="margin: 0; font-weight: 600; color: #004085;">
+                    <strong>L'eventuale nullità di singole clausole non inficia la validità del resto del contratto.</strong>
+                    In caso di controversie si applicherà l'interpretazione più favorevole alla natura gratuita e hobbistica del servizio.
+                </p>
+            </div>
+
+            <div style="background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
+                <p style="margin: 0; font-weight: 600; color: #856404;">
+                    <strong>GDPR Compliance:</strong> Nessun dato personale raccolto - tutto rimane sul tuo dispositivo.
+                    <strong>L'utente rinuncia esplicitamente a richiedere risarcimenti</strong> di qualsiasi natura.
+                </p>
+            </div>
+
+            <div class="terms-section">
+                <h4>2. RESPONSABILITÀ UTENTE</h4>
+                <ul>
+                    <li>L'utente utilizza l'app a proprio rischio per i contenuti inseriti</li>
+                    <li>Ogni recensione o commento è responsabilità esclusiva dell'utente</li>
+                    <li>Il creatore non è responsabile per recensioni o contenuti condivisi</li>
+                    <li>Backup dei propri dati a cura dell'utente</li>
+                    <li>Utilizzo consapevole e responsabile</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h4>3. LIMITAZIONE RESPONSABILITÀ</h4>
+                <ul>
+                    <li>Non siamo responsabili per perdite di dati</li>
+                    <li>Non siamo responsabili per interruzioni del servizio</li>
+                    <li>L'utente utilizza l'app a proprio rischio</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h4>4. DATI E PRIVACY</h4>
+                <ul>
+                    <li>Dati salvati solo localmente sul dispositivo</li>
+                    <li>Nessuna raccolta di dati personali identificabili</li>
+                    <li>Statistiche anonime di utilizzo tramite Umami Analytics (privacy-friendly, nessun cookie)</li>
+                    <li>Visualizzazione mappe tramite Google Maps — soggetta alla <a href="https://policies.google.com/privacy" target="_blank" style="color:#ff6b6b;">Privacy Policy di Google</a></li>
+                    <li>Per i dettagli completi consulta la <a href="privacy.html" style="color:#ff6b6b;">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h4>5. DONAZIONI VOLONTARIE</h4>
+                <ul>
+                    <li>Le donazioni sono completamente facoltative e non forniscono vantaggi o funzioni aggiuntive</li>
+                    <li>Puoi supportare lo sviluppo tramite PayPal (help.enricosarri@gmail.com) o GitHub Sponsors (quando disponibile)</li>
+                    <li>I dati di pagamento sono gestiti esclusivamente da PayPal Inc. o GitHub Inc. — RistoMemo non raccoglie né elabora dati finanziari</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h4>6. COPYRIGHT E PROPRIETÀ INTELLETTUALE</h4>
+                <ul>
+                    <li>© 2024-2026 Enrico Sarri. Licensed under AGPL-3.0</li>
+                    <li>Il design, il codice e la struttura sono protetti da copyright</li>
+                    <li>È vietata la riproduzione o distribuzione non autorizzata</li>
+                </ul>
+            </div>
+
+            <div class="terms-footer">
+                <p><strong>⚠️ Continuando, accetti questi termini di utilizzo.</strong></p>
+                <p class="terms-date">Versione: <span id="termsDate">2026-03-25</span></p>
+            </div>
+        </div>
+
+        <div class="terms-buttons">
+            <button class="btn-accept" onclick="accetta()">✅ Accetto i Termini</button>
+            <button class="btn-decline" onclick="rifiuta()">❌ Rifiuto</button>
+        </div>
+    </div>
+
+    <script>
+        const TERMS_VERSION = '2026-03-25';
+        const soloLettura = new URLSearchParams(window.location.search).get('leggi') === 'true';
+
+        // Se già accettati e non è modalità lettura, vai diretto all'app
+        if (!soloLettura && (localStorage.getItem('terminiAccettati') === '1')) {
+            window.location.replace('index.html');
+        }
+        
+        // In modalità lettura nascondi i pulsanti e mostra torna indietro
+        if (soloLettura) {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelector('.terms-buttons').style.display = 'none';
+                const backBtn = document.createElement('div');
+                backBtn.style.cssText = 'text-align:center; padding: 15px;';
+                backBtn.innerHTML = '<button onclick="tornaSuApp()" style="background: #ff6b6b; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;">&larr; Torna all&apos;app</button>';
+                document.querySelector('.terms-header').insertAdjacentElement('beforebegin', backBtn);
+            });
+        }
+
+        function accetta() {
+            localStorage.setItem('terminiAccettati', '1');
+            window.location.href = 'index.html';
+        }
+
+        function tornaSuApp() {
+            window.close();
+            if (!window.closed) history.back();
+        }
+
+        function rifiuta() {
+            if (confirm('⚠️ Rifiutando i termini non potrai utilizzare l\'app.\n\nSei sicuro?')) {
+                document.body.innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-family:sans-serif;">
+                        <div style="background:rgba(255,255,255,0.95);color:#333;padding:40px;border-radius:20px;max-width:400px;margin:20px;">
+                            <h2 style="color:#dc3545;margin-bottom:20px;">❌ Accesso Negato</h2>
+                            <p style="margin-bottom:25px;">Hai rifiutato i termini di utilizzo.</p>
+                            <button onclick="location.reload()" style="padding:15px 25px;background:#007bff;color:white;border:none;border-radius:10px;cursor:pointer;font-size:16px;font-weight:600;">🔄 Ricarica</button>
+                        </div>
+                    </div>`;
+            }
+        }
+    </script>
+</body>
+</html>
