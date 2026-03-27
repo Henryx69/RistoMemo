@@ -12,7 +12,8 @@ const ASSETS_TO_CACHE = [
   './index.html',
   './manifest.json',
   './salvaristo_icon512.png',
-  './privacy.html'
+  './privacy.html',
+  './terms.html'
 ];
 
 // ---- INSTALL: pre-cache assets essenziali ----
