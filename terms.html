@@ -64,7 +64,7 @@
             border-radius: 0 0 20px 20px;
             flex-shrink: 0;
         }
-        .btn-accept, .btn-decline {
+        .btn-accept {
             padding: 12px 20px;
             border: none;
             border-radius: 10px;
@@ -73,13 +73,27 @@
             cursor: pointer;
             transition: all 0.3s ease;
             flex: 1;
-            max-width: 180px;
+            max-width: 280px;
             min-height: 44px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
         }
-        .btn-accept { background: linear-gradient(45deg, #28a745, #20c997); color: white; }
         .btn-accept:hover, .btn-accept:active { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(40,167,69,0.3); }
-        .btn-decline { background: linear-gradient(45deg, #dc3545, #c82333); color: white; }
-        .btn-decline:hover, .btn-decline:active { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(220,53,69,0.3); }
+        .btn-torna {
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #ff6b6b;
+            color: white;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +104,7 @@
         </div>
 
         <div class="terms-body">
+
             <div class="terms-section">
                 <h4 style="color: #dc3545; font-weight: 700; margin-bottom: 15px;">⚠️ AVVISO IMPORTANTE</h4>
                 <div style="background: #f8d7da; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 20px;">
@@ -142,8 +157,6 @@
                     <li>Nessuna raccolta di dati personali identificabili</li>
                     <li>Statistiche anonime di utilizzo tramite Umami Analytics (privacy-friendly, nessun cookie)</li>
                     <li>Visualizzazione mappe tramite Google Maps — soggetta alla <a href="https://policies.google.com/privacy" target="_blank" style="color:#ff6b6b;">Privacy Policy di Google</a></li>
-                    <li>Funzione "Ristoranti Vicini": utilizza il GPS del dispositivo per calcolare le distanze. La posizione non viene mai trasmessa a terze parti e viene usata solo localmente</li>
-                    <li>Funzione mappa interattiva tramite Leaflet (unpkg.com) e OpenStreetMap — soggetta alla <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" style="color:#ff6b6b;">Privacy Policy di OpenStreetMap</a></li>
                     <li>Per i dettagli completi consulta la <a href="privacy.html" style="color:#ff6b6b;">Privacy Policy</a></li>
                 </ul>
             </div>
@@ -152,7 +165,7 @@
                 <h4>5. DONAZIONI VOLONTARIE</h4>
                 <ul>
                     <li>Le donazioni sono completamente facoltative e non forniscono vantaggi o funzioni aggiuntive</li>
-                    <li>Puoi supportare lo sviluppo tramite PayPal (<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4aca1a8b4eaa1aab6ada7abb7a5b6b6ad84a3a9a5ada8eaa7aba9">[email&#160;protected]</a>) o GitHub Sponsors (quando disponibile)</li>
+                    <li>Puoi supportare lo sviluppo tramite PayPal (help.enricosarri[at]gmail.com) o GitHub Sponsors (quando disponibile)</li>
                     <li>I dati di pagamento sono gestiti esclusivamente da PayPal Inc. o GitHub Inc. — RistoMemo non raccoglie né elabora dati finanziari</li>
                 </ul>
             </div>
@@ -168,51 +181,28 @@
 
             <div class="terms-footer">
                 <p><strong>⚠️ Continuando, accetti questi termini di utilizzo.</strong></p>
-                <p class="terms-date">Versione: <span id="termsDate">2026-03-25</span></p>
+                <p class="terms-date">Versione: 2026-03-25</p>
             </div>
+
         </div>
 
-        <div class="terms-buttons">
-            <button class="btn-accept" onclick="accetta()">✅ Accetto i Termini</button>
-            <button class="btn-decline" onclick="rifiuta()">❌ Rifiuto</button>
+        <div class="terms-buttons" id="btnZone">
+            <button class="btn-accept" onclick="accetta()">✅ Ho letto e accetto i Termini</button>
         </div>
+
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-        const TERMS_VERSION = '2026-03-25';
-        const soloLettura = new URLSearchParams(window.location.search).get('leggi') === 'true';
+    <script>
+        var soloLettura = new URLSearchParams(window.location.search).get('leggi') === 'true';
 
-        // Se già accettati e non è modalità lettura, vai diretto all'app
-        if (!soloLettura && (localStorage.getItem('terminiAccettati') === '1')) {
+        if (!soloLettura && localStorage.getItem('terminiAccettati') === '1') {
             window.location.replace('index.html');
         }
-        
-        // In modalità lettura nascondi i pulsanti e mostra torna indietro
-        if (soloLettura) {
-            document.addEventListener('DOMContentLoaded', function() {
-                document.querySelector('.terms-buttons').style.display = 'none';
-                const backBtn = document.createElement('div');
-                backBtn.style.cssText = 'text-align:center; padding: 15px;';
-                backBtn.innerHTML = '<button onclick="tornaSuApp()" style="background: #ff6b6b; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;">&larr; Torna all&apos;app</button>';
-                document.querySelector('.terms-header').insertAdjacentElement('beforebegin', backBtn);
-            });
-        }
 
-        function accetta() {
+               function accetta() {
             localStorage.setItem('terminiAccettati', '1');
-            window.location.href = 'index.html';
+            window.location.href = 'https://ristomemo.netlify.app';
         }
-
-        function tornaSuApp() {
-            window.close();
-            if (!window.closed) history.back();
-        }
-
-        function rifiuta() {
-            if (confirm('⚠️ Rifiutando i termini non potrai utilizzare l\'app.\n\nSei sicuro?')) {
-                document.body.innerHTML = `
-                    <div style="display:flex;align-items:center;justify-content:center;height:100vh;text-align:center;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-family:sans-serif;">
-                        <div style="background:rgba(255,255,255,0.95);color:#333;padding:40px;border-radius:20px;max-width:400px;margin:20px;">
-                            <h2 style="color:#dc3545;margin-bottom:20px;">❌ Accesso Negato</h2>
-                            <p style="margin-bottom:25px;">Hai rifiutato i termini di utilizzo.</p>
-                            <button onclick="location.reload()" style="padding:15px 25px;background
+    </script>
+</body>
+</html>

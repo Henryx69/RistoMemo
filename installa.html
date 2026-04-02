@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installa RistoMemo</title>
+    <link rel="icon" type="image/png" sizes="512x512" href="salvaristo_icon512.png">
+    <link rel="apple-touch-icon" href="salvaristo_icon512.png">
+    <meta name="theme-color" content="#ff6b6b">
+    <meta name="description" content="RistoMemo - L'app gratuita per ricordare i ristoranti dove mangi bene. Installa gratis sul tuo telefono.">
+    <!-- Open Graph -->
+    <meta property="og:title" content="RistoMemo — Installa gratis">
+    <meta property="og:description" content="L'app per ricordare i ristoranti dove mangi bene. Gratuita, funziona offline, nessun account richiesto.">
+    <meta property="og:image" content="https://ristomemo.netlify.app/salvaristo_icon512.png">
+    <meta property="og:url" content="https://ristomemo.netlify.app/installa.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="RistoMemo">
+    <!-- Twitter/WhatsApp -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="RistoMemo — Installa gratis">
+    <meta name="twitter:description" content="L'app per ricordare i ristoranti dove mangi bene. Gratuita, funziona offline, nessun account richiesto.">
+    <meta name="twitter:image" content="https://ristomemo.netlify.app/salvaristo_icon512.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #fff8f5 0%, #ffece6 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            max-width: 420px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+        }
+        .header {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            padding: 20px 24px 18px;
+            text-align: center;
+        }
+        .header .emoji { font-size: 80px; display: block; margin-bottom: 12px; }
+        .header h1 { font-size: 28px; font-weight: 700; color: white; margin-bottom: 8px; }
+        .header p { font-size: 15px; color: rgba(255,255,255,0.9); line-height: 1.5; }
+        .body { padding: 28px 24px; }
+        .tagline {
+            background: #fff8f5;
+            border-left: 4px solid #ff6b6b;
+            border-radius: 0 12px 12px 0;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .tagline strong { color: #2d2d2d; }
+        .section-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #999;
+            margin-bottom: 14px;
+        }
+        .install-box {
+            background: #f9f9f9;
+            border: 1.5px solid #f0e8e4;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+        .install-box .os {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2d2d2d;
+            margin-bottom: 12px;
+        }
+        .install-box ol {
+            padding-left: 18px;
+            margin: 0;
+        }
+        .install-box li {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            margin-bottom: 2px;
+        }
+        .install-box li strong { color: #2d2d2d; }
+        .btn-apri {
+            display: block;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            margin-top: 24px;
+            transition: transform 0.15s;
+            box-shadow: 0 4px 14px rgba(238,90,36,0.35);
+        }
+        .btn-apri:active { transform: scale(0.98); }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .feature {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .footer {
+            background: #f9f9f9;
+            border-top: 1px solid #f0e8e4;
+            padding: 16px;
+            text-align: center;
+        }
+        .footer a {
+            font-size: 12px;
+            color: #aaa;
+            text-decoration: none;
+        }
+        .footer a:hover { color: #ff6b6b; }
+    </style>
+</head>
+<body>
+    <div class="card">
+
+        <div class="header">
+            <img src="salvaristo_icon512.png" alt="RistoMemo" style="width:80px;height:80px;border-radius:20px;margin-bottom:12px;display:block;margin-left:auto;margin-right:auto;">
+            <h1>RistoMemo</h1>
+            <p>L'app gratuita per non dimenticare<br>i ristoranti dove mangi bene</p>
+        </div>
+
+        <div class="body">
+
+            <div class="tagline">
+                <strong>Salva i tuoi ristoranti preferiti</strong>, aggiungili con valutazioni, note e etichette. Ritrovali quando vuoi, anche offline. I dati restano solo sul tuo telefono.
+            </div>
+
+            <div class="section-label">Come installare</div>
+
+            <div class="install-box">
+                <div class="os">🍎 iPhone / iPad</div>
+                <ol>
+                    <li>Apri questa pagina in <strong>Safari</strong></li>
+                    <li>Tocca il tasto <strong>Condividi</strong> (quadrato con freccia ↑)</li>
+                    <li>Scegli <strong>Aggiungi a Home</strong></li>
+                    <li>Tocca <strong>Aggiungi</strong></li>
+                </ol>
+            </div>
+
+            <div class="install-box">
+                <div class="os">🤖 Android</div>
+                <ol>
+                    <li>Apri questa pagina in <strong>Chrome</strong></li>
+                    <li>Tocca il menu <strong>⋮</strong> in alto a destra</li>
+                    <li>Scegli <strong>Installa app</strong> o <strong>Aggiungi a schermata Home</strong></li>
+                </ol>
+            </div>
+
+            <a href="https://ristomemo.netlify.app" class="btn-apri">
+                Apri RistoMemo →
+            </a>
+
+            <div class="features">
+                <span class="feature">✅ Gratuita</span>
+                <span class="feature">🔒 Privacy-first</span>
+                <span class="feature">📴 Funziona offline</span>
+                <span class="feature">🚫 Nessun account</span>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <a href="https://github.com/Henryx69/RistoMemo" target="_blank">⭐ Progetto open source su GitHub</a>
+        </div>
+
+    </div>
+</body>
+</html>

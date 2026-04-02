@@ -1,11 +1,11 @@
 // ==========================================
-// RistoMemo FREE - Service Worker v2.2.0
-// © 2025 Enrico Sarri - AGPL-3.0
+// RistoMemo FREE - Service Worker v2.5.11
+// © 2026 Enrico Sarri - AGPL-3.0
 // Strategia: Network-first con fallback offline
 // Aggiornamento automatico senza toccare CACHE_NAME
 // ==========================================
 
-const CACHE_NAME = 'ristomemo-free-v2.4.5';
+const CACHE_NAME = 'ristomemo-free-v2.5.11';
 
 const ASSETS_TO_CACHE = [
   './',

@@ -17,7 +17,7 @@
 
 <!-- Cache busting -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta name="version" content="2.4.3">
+<meta name="version" content="2.5.11">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,500;1,400&display=swap');
 
@@ -370,41 +370,6 @@
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-  }
-
-  /* ===================== SEZIONI FORM ===================== */
-  .form-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 24px 0 16px;
-  }
-  .form-section:first-child { margin-top: 4px; }
-  .form-section-num {
-    width: 26px; height: 26px;
-    background: linear-gradient(135deg, var(--red), var(--red-dark));
-    color: white;
-    border-radius: 50%;
-    font-size: 12px;
-    font-weight: 900;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .form-section-title {
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text);
-    flex: 1;
-  }
-  .form-section-line {
-    flex: 1;
-    height: 2px;
-    background: var(--border);
-    border-radius: 1px;
   }
 
   /* ===================== SEZIONI FORM ===================== */
@@ -1096,8 +1061,6 @@
   }
 </style>
   <script async src="https://cloud.umami.is/script.js" data-website-id="72685988-a9e4-49eb-875c-59a13c1694e9"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 <body>
 
@@ -1141,7 +1104,7 @@
     <!-- box privacy -->
     <div style="background:#f0fff4;border-left:4px solid #28a745;border-radius:10px;padding:16px;margin-bottom:28px;font-size:14px;line-height:1.7;">
       <strong>🔒 Privacy</strong><br>
-      Zero tracking · Zero analytics · Zero pubblicità.<br>
+      Zero tracking · Analytics anonimi (Umami) · Zero pubblicità.<br>
       I dati non escono mai dal tuo dispositivo.
     </div>
 
@@ -1354,7 +1317,7 @@
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.4.3 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.11 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -1422,29 +1385,13 @@
   </div>
 
   <!-- Pulsante Vicini (posizione B) -->
-  <button onclick="avviaVicini()" id="btnVicini" style="width:100%;padding:13px;background:#e8f0fe;color:#1a56db;border:1.5px solid #b3c8f8;border-radius:14px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:14px;transition:all 0.2s;">
-    🗺️ Trova i tuoi ristoranti salvati vicino a te
-  </button>
 
-  <button id="btnResetVicini" onclick="resetVicini()" style="display:none;width:100%;padding:10px;background:#fff;color:#666;border:1.5px solid #ccc;border-radius:14px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;">✖️ Torna alla lista normale</button>
-  <div id="viciniMappa" style="display:none;border-radius:14px;overflow:hidden;margin-bottom:14px;border:1.5px solid var(--border);height:280px;"></div>
-
-  <!-- Box loading vicini -->
-
-  <div id="viciniLoading" style="display:none;background:var(--tag-bg);border-radius:14px;padding:16px;text-align:center;margin-bottom:14px;border:1.5px solid var(--border);">
-    <div style="font-size:14px;font-weight:800;color:var(--text);margin-bottom:4px;" id="viciniTitle">📡 Rilevamento posizione...</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:12px;min-height:16px;" id="viciniSub">Attendi un momento</div>
-    <div style="background:var(--border);border-radius:20px;height:6px;overflow:hidden;margin-bottom:8px;">
-      <div id="viciniBar" style="height:100%;background:var(--red);border-radius:20px;width:0%;transition:width 0.2s ease;"></div>
-    </div>
-    <div style="font-size:12px;color:var(--muted);" id="viciniPct">0%</div>
-  </div>
 
   <div class="list-header" id="listHeader"></div>
   <div id="restaurantsList"></div>
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.4.3 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.11 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -1505,7 +1452,7 @@
     </p>
     <div style="background:#fff;border:2px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
       <p style="font-size:13px;font-weight:700;margin-bottom:6px;">💳 Supporta tramite PayPal:</p>
-      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:4px;">📧 help.enricosarri@gmail.com</p>
+      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:4px;">📧 <a>help.enricosarri@gmail.com</a></p>
       <p style="font-size:12px;color:var(--muted);">(Invia tramite la tua app PayPal)</p>
     </div>
     <p style="font-size:11px;color:var(--muted);">Totalmente facoltativo · Nessun vantaggio extra</p>
@@ -1513,7 +1460,7 @@
 
   <!-- Copyright -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:8px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.4.3 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.11 · AGPL-3.0<br>
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy Policy</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/terms.html?leggi=true" target="_blank" style="color:var(--red);">📋 Termini di Utilizzo</a>
@@ -1688,10 +1635,31 @@
     ✏️ Puoi modificare un ristorante in qualsiasi momento toccando il tasto ✏️ sulla card
   </div>
 
+<!-- CONTATTO -->
+  <div style="background:#e7f3ff;border:2px solid #0066cc;border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;">
+    <div style="font-size:28px;margin-bottom:8px;">✉️</div>
+    <p style="font-weight:800;font-size:15px;color:#2d2d2d;margin-bottom:6px;">Hai trovato un bug o hai un consiglio?</p>
+    <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5;">Scrivimi, ogni segnalazione aiuta a migliorare RistoMemo.</p>
+    <p style="font-size:14px;font-weight:800;color:#0066cc;margin-bottom:12px;">help.enricosarri@gmail.com</p>
+    <button onclick="copiaEmailContatto()" style="background:linear-gradient(135deg,#0066cc,#0052a3);color:white;border:none;border-radius:12px;padding:11px 24px;font-family:Nunito,sans-serif;font-weight:800;font-size:14px;cursor:pointer;">
+      📋 Copia email
+    </button>
+  </div>
+
+<!-- CONSIGLIA -->
+  <div style="background:#fff1ed;border:2px solid #ffcdb8;border-radius:16px;padding:20px;margin-bottom:16px;text-align:center;">
+    <div style="font-size:28px;margin-bottom:8px;">📲</div>
+    <p style="font-weight:800;font-size:15px;color:#2d2d2d;margin-bottom:6px;">Conosci qualcuno a cui potrebbe piacere?</p>
+    <p style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.5;">Condividi RistoMemo con un amico — è gratuita, funziona offline e non richiede nessun account.</p>
+    <button onclick="consigliaApp()" style="background:linear-gradient(135deg,#25D366,#128C7E);color:white;border:none;border-radius:12px;padding:13px 24px;font-family:Nunito,sans-serif;font-weight:800;font-size:15px;cursor:pointer;width:100%;">
+      💬 Consiglia su WhatsApp
+    </button>
+  </div>
+
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.4.3 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.11 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -1706,7 +1674,7 @@
 <div id="cookieBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#2d2d2d;color:#fff;padding:14px 16px;z-index:8000;font-family:Nunito,sans-serif;">
   <div style="max-width:480px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
     <p style="flex:1;font-size:12px;line-height:1.6;margin:0;min-width:200px;">
-      🍪 Nessun cookie di profilazione. I dati restano sul tuo dispositivo. Chiamate esterne: Google Fonts, Netlify (hosting), unpkg.com (libreria mappa), OpenStreetMap (tile mappa), Umami Analytics (statistiche anonime).
+      🍪 Nessun cookie di profilazione. I dati restano sul tuo dispositivo. Chiamate esterne: Netlify (hosting), Umami Analytics (statistiche anonime).
       <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:#ff6b6b;font-weight:700;text-decoration:none;">Privacy Policy</a>
     </p>
     <button onclick="chiudiCookieBanner()" style="background:var(--red);color:white;border:none;padding:8px 18px;border-radius:10px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">
@@ -1715,7 +1683,7 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===================== DATA =====================
 const ESEMPIO_ID = '__esempio__';
 const STORAGE_KEY = 'myRestaurants';
@@ -1747,7 +1715,7 @@ function chiudiWizard() {
 function chiudiWizardSolo() {
   document.getElementById('wizardOverlay').classList.add('hidden');
   localStorage.setItem('wizardVisto', '1');
-  showTab('cerca', document.querySelectorAll('.tab')[1]);
+  showTab('cerca', document.getElementById('tab-btn-cerca'));
   aggiornaLista();
 }
 
@@ -1759,7 +1727,8 @@ function showTab(id, el) {
   document.getElementById('tab-' + id).style.display = 'block';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   if (el) el.classList.add('active');
-  if (id === 'cerca') aggiornaLista();
+if (id === 'cerca') aggiornaLista();
+  if (id === 'guida') aggiornaStatCollezione();
   if (id === 'backup') { aggiornaStatistiche(); aggiornaInfoBackup(); }
 }
 
@@ -1944,7 +1913,7 @@ function modificaRistorante(id) {
   editingId = id;
 
   // Vai al tab aggiungi
-  showTab('aggiungi', document.querySelectorAll('.tab')[0]);
+  showTab('aggiungi', document.getElementById('tab-btn-aggiungi'));
 
   // Precompila campi base
   document.getElementById('f-nome').value = r.name || '';
@@ -2111,23 +2080,13 @@ function salvaRistorante(forzaSalvataggio = false) {
   }
 
   saveRestaurants(arr);
+  aggiornaStatCollezione();
   annullaModifica();
 
-  // Cattura GPS dispositivo in background
-  if (!r._lat && !r.lat && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(pos) {
-      const arr = getRestaurants();
-      const idx = arr.findIndex(x => String(x.id) === String(r.id));
-      if (idx !== -1) {
-        arr[idx]._lat = pos.coords.latitude;
-        arr[idx]._lng = pos.coords.longitude;
-        saveRestaurants(arr);
-      }
-    }, function() {}, { timeout: 8000, maximumAge: 60000 });
-  }
+
 
   setTimeout(() => {
-    showTab('cerca', document.querySelectorAll('.tab')[1]);
+    showTab('cerca', document.getElementById('tab-btn-cerca'));
     aggiornaLista();
   }, 700);
 }
@@ -2432,169 +2391,6 @@ function aggiornaStatCollezione() {
 
 // ===================== VICINI =====================
 // geocodificaSilenzioso rimossa — sostituita da GPS dispositivo
-
-function distanzaKm(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLng/2) * Math.sin(dLng/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function setViciniStato(title, sub, pct) {
-  document.getElementById('viciniTitle').textContent = title;
-  document.getElementById('viciniSub').textContent = sub;
-  document.getElementById('viciniBar').style.width = pct + '%';
-  document.getElementById('viciniPct').textContent = pct + '%';
-}
-
-async function avviaVicini() {
-  const btn = document.getElementById('btnVicini');
-  const loading = document.getElementById('viciniLoading');
-  btn.disabled = true;
-  loading.style.display = 'block';
-  setViciniStato('📡 Rilevamento posizione...', 'Attendi un momento', 0);
-
-  let userLat, userLng;
-  try {
-    const pos = await new Promise((res, rej) =>
-      navigator.geolocation.getCurrentPosition(res, rej, { timeout: 8000 })
-    );
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
-    window._viciniUserLat = userLat;
-    window._viciniUserLng = userLng;
-  } catch(e) {
-    setViciniStato('❌ Posizione non disponibile', 'Abilita il GPS e riprova', 0);
-    setTimeout(() => { loading.style.display = 'none'; btn.disabled = false; }, 2500);
-    return;
-  }
-
-  setViciniStato('📏 Calcolo distanze...', 'Ordinamento per vicinanza...', 80);
-  await new Promise(r => setTimeout(r, 400));
-
-  const arr = getRestaurants().filter(r => r.id !== ESEMPIO_ID && (r._lat || r.lat) && (r._lng || r.lon));
-  arr.forEach(r => {
-    const lat = r._lat || r.lat;
-    const lng = r._lng || r.lon;
-    r._dist = distanzaKm(userLat, userLng, lat, lng);
-  });
-  arr.sort((a, b) => a._dist - b._dist);
-  const vicini = arr.filter(r => r._dist <= 10);
-
-  const senzaCoord = getRestaurants().filter(r => r.id !== ESEMPIO_ID && !r._lat && !r.lat).length;
-
-  setViciniStato('✅ ' + vicini.length + ' ristoranti entro 10 km!', '', 100);
-  setTimeout(() => {
-    loading.style.display = 'none';
-    btn.disabled = false;
-    mostraRisultatiVicini(vicini, senzaCoord);
-  }, 600);
-}
-
-function mostraRisultatiVicini(vicini, senzaCoord) {
-  const list = document.getElementById('restaurantsList');
-  const hdr  = document.getElementById('listHeader');
-  const oggi = GIORNI_IT[new Date().getDay()];
-
-  document.getElementById('btnVicini').style.display = 'none';
-  document.getElementById('btnResetVicini').style.display = 'block';
-
-  if (vicini.length === 0) {
-    hdr.textContent = '';
-    const msg = senzaCoord > 0
-      ? `Nessun ristorante geolocalizzato vicino a te. ${senzaCoord} ${senzaCoord>1?'ristoranti':'ristorante'} senza coordinate.`
-      : 'Nessun ristorante trovato entro 10 km.';
-    list.innerHTML = `<div class="no-results">${msg}</div>`;
-    return;
-  }
-
-  hdr.textContent = vicini.length + (vicini.length !== 1 ? ' ristoranti' : ' ristorante') + ' vicino a te (entro 10 km)';
-  if (senzaCoord > 0) hdr.textContent += ` · ${senzaCoord} senza coordinate`;
-
-  const mapDiv = document.getElementById('viciniMappa');
-  mapDiv.style.display = 'block';
-  mapDiv.innerHTML = '';
-
-  setTimeout(() => {
-    const firstLat = vicini[0]._lat || vicini[0].lat;
-    const firstLng = vicini[0]._lng || vicini[0].lon;
-    const map = L.map('viciniMappa').setView([firstLat, firstLng], 13);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-    }).addTo(map);
-
-    if (window._viciniUserLat && window._viciniUserLng) {
-      L.circleMarker([window._viciniUserLat, window._viciniUserLng], {
-        radius: 10, color: '#1a56db', fillColor: '#1a56db', fillOpacity: 0.9, weight: 2
-      }).bindPopup('📍 Sei qui').addTo(map);
-    }
-
-    vicini.forEach((r, i) => {
-      const lat = r._lat || r.lat;
-      const lng = r._lng || r.lon;
-      const n = i + 1;
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="background:#c0392b;color:#fff;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${n}</div>`,
-        iconSize: [28, 28], iconAnchor: [14, 14]
-      });
-      L.marker([lat, lng], { icon })
-        .bindPopup(`<strong>${n}. ${r.name}</strong><br>${r.citta||''}`)
-        .on('click', () => {
-          const card = document.getElementById('vicini-card-' + i);
-          if (card) {
-            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            card.style.outline = '3px solid #c0392b';
-            setTimeout(() => card.style.outline = '', 1500);
-          }
-        })
-        .addTo(map);
-    });
-
-    const bounds = vicini.map(r => [r._lat || r.lat, r._lng || r.lon]);
-    if (window._viciniUserLat) bounds.push([window._viciniUserLat, window._viciniUserLng]);
-    if (bounds.length > 1) map.fitBounds(bounds, { padding: [30, 30] });
-
-    window._viciniMap = map;
-  }, 100);
-
-  list.innerHTML = vicini.map((r, i) => {
-    const dist = r._dist < 1 ? Math.round(r._dist * 1000) + ' m' : r._dist.toFixed(1) + ' km';
-    const n = i + 1;
-    const sid = String(r.id).replace(/'/g, "\'");
-    const stelle = r.rating ? '⭐'.repeat(r.rating) : '';
-    const tags = (r.tags||[]).map(t => `<span class="tag">${t}</span>`).join('');
-    const chiuso = (r.chiusura||[]).includes(oggi);
-    const cuore = r.preferito ? '❤️' : '🤍';
-    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((r.name||'') + ' ' + (r.citta||''))}`;
-    return `<div class="restaurant-card" id="vicini-card-${i}">
-      <div class="card-header-band">
-        <div class="card-top">
-          <div class="card-name"><span style="background:#c0392b;color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;margin-right:6px;">${n}</span>${r.name}</div>
-          <div class="card-right">
-            <div class="card-actions">
-              <button class="card-action-btn" onclick="togglePreferito('${sid}')" title="Preferito">${cuore}</button>
-              <button class="card-action-btn edit-btn" onclick="modificaRistorante('${sid}')" title="Modifica">✏️</button>
-              <button class="card-action-btn share-btn" onclick="condividiRistorante('${sid}')" title="Condividi">↗</button>
-              <button class="card-action-btn delete-btn" onclick="eliminaRistorante('${sid}')" title="Elimina">🗑️</button>
-            </div>
-            <div class="card-stars">${stelle}</div>
-          </div>
-        </div>
-        <div class="card-city">${r.citta||''} <span style="color:#fff;opacity:0.85;font-size:11px;">· ${dist}</span></div>
-      </div>
-      ${tags ? `<div class="card-tags">${tags}</div>` : ''}
-      ${r.note ? `<div class="card-note">${r.note}</div>` : ''}
-      <div class="card-footer-band">
-        ${chiuso ? '<span class="chiuso-badge">⛔ Oggi chiuso</span>' : (r.chiusura&&r.chiusura.length ? '<span style="font-size:11px;color:var(--muted);">Chiuso: '+r.chiusura.join(', ')+'</span>' : '')}
-        <a href="${mapUrl}" target="_blank" class="map-btn">🗺️ Mappa</a>
-      </div>
-    </div>`;
-  }).join('');
-}
 function toggleMappa(id, btn) {
   const wrap = document.getElementById('map-' + id);
   if (!wrap) return;
@@ -2602,6 +2398,23 @@ function toggleMappa(id, btn) {
   btn.textContent = isOpen ? '🗺️ Chiudi mappa' : '🗺️ Mappa';
 }
 
+function copiaEmailContatto() {
+  const email = 'help.enricosarri@gmail.com';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(email).then(() => {
+      showNotif('📋 Email copiata!', 'success');
+    }).catch(() => {
+      showNotif('📋 Copia: help.enricosarri@gmail.com', 'success');
+    });
+  } else {
+    showNotif('📋 Copia: help.enricosarri@gmail.com', 'success');
+  }
+}
+
+function consigliaApp() {
+  const testo = encodeURIComponent('Uso questa app gratuita per salvare i ristoranti dove mangio bene 🍽️\nInstallala anche tu, è gratis e funziona offline:\nhttps://ristomemo.netlify.app/installa.html');
+  window.open('https://wa.me/?text=' + testo, '_blank');
+}
 function condividiRistorante(id) {
   const r = getRestaurants().find(x => String(x.id) === String(id));
   if (!r) return;
@@ -2613,8 +2426,12 @@ function condividiRistorante(id) {
     stelle ? stelle : '',
     tags ? `🏷️ ${tags}` : '',
     r.note ? `💬 ${r.note}` : '',
-    r.chiusura?.length ? `🔒 Chiuso: ${r.chiusura.join(', ')}` : ''
+  r.chiusura?.length ? `🔒 Chiuso: ${r.chiusura.join(', ')}` : '',
+    '  ',
+    `💡 Uso RistoMemo per non dimenticare i posti dove si mangia bene — è gratis e funziona anche offline.`,
+    `👉 https://ristomemo.netlify.app/installa.html`
   ].filter(Boolean).join('\n');
+
 
   if (navigator.share) {
     navigator.share({ title: r.name, text: testo })
@@ -2876,17 +2693,6 @@ function importaBackup(e) {
   fr.readAsText(file);
 }
 
-function resetVicini() {
-  if (window._viciniMap) { window._viciniMap.remove(); window._viciniMap = null; }
-  document.getElementById('viciniMappa').style.display = 'none';
-  document.getElementById('btnResetVicini').style.display = 'none';
-  document.getElementById('btnVicini').style.display = 'block';
-  document.getElementById('viciniLoading').style.display = 'none';
-  window._viciniUserLat = null;
-  window._viciniUserLng = null;
-  aggiornaLista();
-}
-
 // ===================== NOTIFICA =====================
 
 let notifTimer;
@@ -3026,9 +2832,7 @@ function mostraNotificaAggiornamento(newWorker) {
 
   // Salva riferimento al nuovo worker per attivarlo al click
   window._pendingWorker = newWorker;
-}
-
-function aggiornaApp() {
+}function aggiornaApp() {
   if (window._pendingWorker) {
     window._pendingWorker.postMessage({ type: 'SKIP_WAITING' });
   }

@@ -233,11 +233,38 @@
                 font-size: 15px;
             }
         }
+   .scroll-top-btn {
+            position: fixed;
+            bottom: 28px;
+            right: 20px;
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(238,90,36,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        .scroll-top-btn.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
+    <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Torna su">↑</button>
+    <div class="container">        <div class="header">
             <a href="index.html" class="back-button">
                 ← Torna all'App
             </a>
@@ -265,7 +292,7 @@
                 <h2>📱 Informazioni Generali</h2>
                 <p><strong>Nome dell'Applicazione:</strong> RistoMemo</p>
                 <p><strong>Sviluppatore:</strong> Enrico Sarri</p>
-                <p><strong>Versione:</strong> 2.4.3</p>
+                <p><strong>Versione:</strong> 2.5.11</p>
                 <p><strong>Tipologia:</strong> Progressive Web App (PWA)</p>
                 <p><strong>Data creazione:</strong> 29 Luglio 2024</p>
                 <p><strong>Ultimo aggiornamento:</strong> 25 Marzo 2026</p>
@@ -390,8 +417,8 @@
 
             <div class="contact-info">
                 <h4>📧 Contatti per la Privacy</h4>
-                <p><strong>Titolare del Trattamento:</strong> Enrico Sarri</p>
-                <p><strong>Email:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a0c8c5ccd08ec5ced2c9c3cfd3c1d2d2c9e0c7cdc1c9cc8ec3cfcd">[email&#160;protected]</a></p>
+                <p><strong>Email:</strong> <a>help.enricosarri@gmail.com</a></p>
+                <p style="margin-top: 8px;">Puoi usare questa email anche per <strong>segnalare bug, problemi o inviare consigli</strong> sull'app — trovi il collegamento diretto anche nella sezione <em>Guida</em> dell'applicazione.</p>
                 <p><em>Nota: Trattandosi di un'app che non raccoglie dati, il supporto è limitato.</em></p>
             </div>
 
@@ -399,8 +426,7 @@
 <div class="section">
     <h2>🛠️ Servizi di Terze Parti</h2>
     <p>
-        RistoMemo può interagire con servizi esterni <strong>esclusivamente su iniziativa esplicita dell’utente</strong>.
-        Nessun servizio di terze parti viene attivato automaticamente.
+        RistoMemo può interagire con servizi esterni su iniziativa esplicita dell'utente o, nel caso di Umami Analytics, in modo automatico per raccogliere statistiche anonime aggregate.
     </p>
     <ul>
         <li>
@@ -444,10 +470,21 @@
         <div class="footer">
             <p><strong>© 2025-2026 Enrico Sarri – RistoMemo è software open source (GNU AGPL v3.0)
 </strong></p>
-            <p>RistoMemo v2.4.3 - Privacy Policy creata il 29/07/2024, aggiornata al 23 marzo 2026</p>
+            <p>RistoMemo v2.5.11 - Privacy Policy creata il 29/07/2024, aggiornata al 31 marzo 2026</p>
             <p style="margin-top: 15px;">
                 <a href="index.html" style="background: #ff6b6b; color: white; padding: 12px 25px; border-radius: 10px; text-decoration: none; font-weight: 600; display: inline-block;">
-                    🍽️ Torna a RistoMemo
+                   🍽️ Torna a RistoMemo
                 </a>
             </p>
+<script>
+window.addEventListener('scroll', function() {
+    var btn = document.getElementById('scrollTopBtn');
+    if (!btn) return;
+    if (window.scrollY > 300) {
+        btn.classList.add('show');
+    } else {
+        btn.classList.remove('show');
+    }
+});
+</script>
      
