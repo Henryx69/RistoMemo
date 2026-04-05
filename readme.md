@@ -14,8 +14,8 @@ RistoMemo è una web app privacy-first che ti permette di salvare e organizzare 
 - 🗺️ Mini-mappa Google Maps integrata nella scheda
 - 🔍 Ricerca avanzata per parole chiave, filtri per giorno e preferiti
 - 💾 Backup e ripristino dati via email o file JSON
-- 📊 Contatore contestuale dei ristoranti salvati
-- 🧭 Onboarding guidato per i nuovi utenti
+- 📷 Condivisione singolo ristorante via QR code (importazione diretta)
+- 📊 Statistiche collezione in tempo reale
 - 🔒 100% privato (localStorage, nessun server)
 - 📱 Funziona offline (PWA installabile)
 
@@ -58,7 +58,7 @@ RistoMemo è un progetto open source. Sono benvenuti contributi di ogni tipo:
 Se RistoMemo ti è utile, puoi supportarne lo sviluppo:
 
 - ☕ GitHub Sponsors (quando disponibile)
-- 💳 PayPal: **help.enricosarri@gmail.com**
+- 💳 PayPal: **help.enricosarri[at]gmail.com**
 
 Il tuo supporto aiuta a mantenere RistoMemo gratuito e open source.
 
