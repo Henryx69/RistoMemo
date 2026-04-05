@@ -49,7 +49,7 @@ RistoMemo è un progetto open source. Sono benvenuti contributi di ogni tipo:
 - 🐛 Segnalazioni di bug (Issues)
 - ✨ Proposte di nuove funzionalità
 - 💻 Pull request sul codice
-- ⭐ Una stella al progetto
+- ⭐ Una stella al progetto su [github.com/Henryx69/RistoMemo](https://github.com/Henryx69/RistoMemo) (pulsante ⭐ in alto a destra nella pagina)
 
 ---
 
