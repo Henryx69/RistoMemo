@@ -706,6 +706,20 @@ function copiaEmailContatto() {
   }
 }
 
+
+function copiaEmailPayPal() {
+  const email = 'enricosarri69@gmail.com';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(email).then(() => {
+      showNotif('📋 Email PayPal copiata!', 'success');
+    }).catch(() => {
+      showNotif('📋 Copia: enricosarri69@gmail.com', 'success');
+    });
+  } else {
+    showNotif('📋 Copia: enricosarri69@gmail.com', 'success');
+  }
+}
+
 function consigliaApp() {
   const testo = encodeURIComponent('Uso questa app gratuita per salvare i ristoranti dove mangio bene 🍽️\nInstallala anche tu, è gratis e funziona offline:\nhttps://ristomemo.netlify.app/installa.html');
   window.open('https://wa.me/?text=' + testo, '_blank');
@@ -740,6 +754,7 @@ function condividiTesto(id) {
     `🍽️ ${r.name}`,
     r.citta ? `📍 ${r.citta}` : '',
     stelle || '',
+    r.telefono ? `📞 ${r.telefono}` : '',
     tags ? `🏷️ ${tags}` : '',
     r.note ? `💬 ${r.note}` : '',
     r.chiusura?.length ? `🔒 Chiuso: ${r.chiusura.join(', ')}` : '',

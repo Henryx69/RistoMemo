@@ -17,7 +17,7 @@
 
 <!-- Cache busting -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta name="version" content="2.5.17">
+<meta name="version" content="2.5.18">
 
 <link rel="stylesheet" href="style.css">
   <script async src="https://cloud.umami.is/script.js" data-website-id="72685988-a9e4-49eb-875c-59a13c1694e9"></script>
@@ -211,7 +211,7 @@
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.17 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.18 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -285,7 +285,7 @@
   <div id="restaurantsList"></div>
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.17 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.18 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -346,16 +346,20 @@
       Se RistoMemo ti è utile,<br>puoi supportare volontariamente lo sviluppo.
     </p>
     <div style="background:#fff;border:2px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
-      <p style="font-size:13px;font-weight:700;margin-bottom:6px;">💳 Supporta tramite PayPal:</p>
-      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:4px;">📧 <a><span class="__cf_email__" data-cfemail="c5ada0a9b5eba0abb7aca6aab6a4b7b7ac85a2a8a4aca9eba6aaa8">[email&#160;protected]</span></a></p>
-      <p style="font-size:12px;color:var(--muted);">(Invia tramite la tua app PayPal)</p>
+      <p style="font-size:13px;font-weight:700;margin-bottom:10px;">💳 Supporta tramite PayPal:</p>
+      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:8px;text-align:center;">enricosarri69@gmail.com</p>
+      <div style="text-align:center;margin-bottom:8px;">
+        <button onclick="navigator.clipboard.writeText('enricosarri69@gmail.com').then(function(){var b=document.getElementById('copied-paypal');b.style.opacity='1';setTimeout(function(){b.style.opacity='0'},2000)})" style="background:var(--red);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📋 Copia email</button>
+        <div id="copied-paypal" style="font-size:12px;color:green;margin-top:4px;opacity:0;transition:opacity 0.3s;">Email copiata ✓</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);text-align:center;">(Invia tramite la tua app PayPal)</p>
     </div>
     <p style="font-size:11px;color:var(--muted);">Totalmente facoltativo · Nessun vantaggio extra</p>
   </div>
 
   <!-- Copyright -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:8px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.17 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.18 · AGPL-3.0<br>
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy Policy</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/terms.html?leggi=true" target="_blank" style="color:var(--red);">📋 Termini di Utilizzo</a>
@@ -396,6 +400,21 @@
     </p>
   </div>
 
+  <!-- INSTALLA -->
+  <div style="background:#f0faf4;border:2px solid #27ae60;border-radius:14px;padding:18px;margin-bottom:16px;">
+    <p style="font-weight:900;font-size:15px;color:#1e8449;margin:0 0 10px;">📲 Installa l'app sul telefono</p>
+    <p style="font-size:13px;line-height:1.7;color:#333;margin:0 0 12px;">
+      Aggiungila alla schermata Home per aprirla come un'app vera — funziona anche senza connessione, nessun app store richiesto.
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <span style="background:#d5f0e0;color:#1e6e3e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;">🍎 iPhone: Safari → Condividi → Aggiungi a Home</span>
+      <span style="background:#d5f0e0;color:#1e6e3e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;">🤖 Android: Chrome → ⋮ → Installa app</span>
+    </div>
+    <a href="installa.html" target="_blank" style="display:block;background:linear-gradient(135deg,#27ae60,#1e8449);color:white;text-align:center;padding:12px;border-radius:10px;font-size:14px;font-weight:800;text-decoration:none;">
+      📲 Guida completa all'installazione →
+    </a>
+  </div>
+
   <!-- CARD ESEMPIO -->
   <div style="margin-bottom:16px;">
     <p style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Esempio di scheda salvata</p>
@@ -406,6 +425,7 @@
       </div>
       <div style="background:#fff;padding:12px 16px;font-size:13px;color:#444;">
         <div style="margin-bottom:8px;">📍 Roma, Via della Lungaretta 25</div>
+        <div style="margin-bottom:8px;">📞 06 581 8355</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
           <span class="tag">🔥 Caminetto</span>
           <span class="tag">🥩 Carne</span>
@@ -505,6 +525,17 @@
     </div>
   </div>
 
+  <!-- QR HEADER -->
+  <div style="background:#fff;border:2px solid #f0e8e4;border-radius:14px;padding:18px;margin-bottom:16px;">
+    <p style="font-weight:800;font-size:14px;margin-bottom:10px;">&#9700; Il QR code in alto a sinistra</p>
+    <div style="display:flex;align-items:flex-start;gap:12px;">
+      <span style="font-size:22px;flex-shrink:0;">&#128247;</span>
+      <p style="font-size:13px;line-height:1.7;color:#444;margin:0;">
+        Tocca il QR code nell'angolo in alto a sinistra per ingrandirlo. Fallo scansionare a un amico — lo porta direttamente alla pagina di installazione di RistoMemo. È il modo più rapido per consigliare l'app.
+      </p>
+    </div>
+  </div>
+
   <!-- ICONE CARD -->
   <div style="background:#fff;border:2px solid #f0e8e4;border-radius:14px;padding:18px;margin-bottom:16px;">
     <p style="font-weight:800;font-size:14px;margin-bottom:14px;">🃏 Le icone sulla scheda ristorante</p>
@@ -577,7 +608,7 @@
     <div style="font-size:28px;margin-bottom:8px;">✉️</div>
     <p style="font-weight:800;font-size:15px;color:#2d2d2d;margin-bottom:6px;">Hai trovato un bug o hai un consiglio?</p>
     <p style="font-size:13px;color:#666;margin-bottom:12px;line-height:1.5;">Scrivimi, ogni segnalazione aiuta a migliorare RistoMemo.</p>
-    <p style="font-size:14px;font-weight:800;color:#0066cc;margin-bottom:12px;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5d3538312d7338332f343e322e3c2f2f341d3a303c3431733e3230">[email&#160;protected]</a></p>
+    <p style="font-size:14px;font-weight:800;color:#0066cc;margin-bottom:12px;">help.enricosarri@gmail.com</p>
     <button onclick="copiaEmailContatto()" style="background:linear-gradient(135deg,#0066cc,#0052a3);color:white;border:none;border-radius:12px;padding:11px 24px;font-family:Nunito,sans-serif;font-weight:800;font-size:14px;cursor:pointer;">
       📋 Copia email
     </button>
@@ -596,7 +627,7 @@
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.17 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.18 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
