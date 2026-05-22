@@ -721,7 +721,7 @@ function copiaEmailPayPal() {
 }
 
 function consigliaApp() {
-  const testo = encodeURIComponent('Uso questa app gratuita per salvare i ristoranti dove mangio bene 🍽️\nInstallala anche tu, è gratis e funziona offline:\nhttps://ristomemo.netlify.app/installa.html');
+  const testo = encodeURIComponent('🍽️✨ Ho creato un\'app per chi ama mangiare bene!\n\nQuante volte hai dimenticato il nome di quel ristorante fantastico? 😅\nCosì ho costruito RistoMemo.\n\n📌 Salvi i locali con voto e note personali\n🔍 Filtri per città, cucina e voto\n📴 Offline, niente account, niente abbonamenti\n🚫 Zero pubblicità\n💯 Completamente GRATIS\n\nLa uso ogni volta che mangio fuori 👇\nhttps://ristomemo.netlify.app/installa.html');
   window.open('https://wa.me/?text=' + testo, '_blank');
 }
 function condividiRistorante(id) {

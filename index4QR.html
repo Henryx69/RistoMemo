@@ -17,7 +17,7 @@
 
 <!-- Cache busting -->
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta name="version" content="2.5.19">
+<meta name="version" content="2.5.14">
 
 <link rel="stylesheet" href="style.css">
   <script async src="https://cloud.umami.is/script.js" data-website-id="72685988-a9e4-49eb-875c-59a13c1694e9"></script>
@@ -36,12 +36,91 @@
   </div>
 </div>
 
+<!-- TERMINI MODAL -->
+<div id="termsModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(4px);z-index:6000;align-items:flex-end;justify-content:center;">
+  <div style="background:#fff;border-radius:28px 28px 0 0;padding:28px 24px 44px;max-width:480px;width:100%;max-height:92vh;overflow-y:auto;animation:sheetUp 0.35s cubic-bezier(0.34,1.3,0.64,1);">
 
+    <!-- pill -->
+    <div style="width:40px;height:4px;background:#eee;border-radius:2px;margin:0 auto 24px;"></div>
+
+    <!-- intestazione -->
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="font-size:52px;margin-bottom:10px;">🍽️</div>
+      <h2 style="font-size:24px;font-weight:900;margin-bottom:8px;color:#2d2d2d;">Benvenuto in RistoMemo</h2>
+      <p style="font-size:14px;color:#888;line-height:1.5;">Prima di iniziare, leggi queste informazioni importanti.</p>
+    </div>
+
+    <!-- box dati -->
+    <div style="background:#fff8f5;border-left:4px solid #ff6b6b;border-radius:10px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.7;">
+      <strong>💾 I tuoi dati</strong><br>
+      Tutto è salvato <em>solo sul tuo dispositivo</em>. Nessun dato viene trasmesso.<br>
+      <strong>Fai backup regolari!</strong> Se cambi telefono senza backup, perdi tutto.
+    </div>
+
+    <!-- box progetto -->
+    <div style="background:#f0f8ff;border-left:4px solid #0066cc;border-radius:10px;padding:16px;margin-bottom:14px;font-size:14px;line-height:1.7;">
+      <strong>🆓 Progetto hobbistico gratuito</strong><br>
+      Sviluppato da Enrico Sarri. Non è un servizio commerciale.<br>
+      Utilizzo a proprio rischio. Nessuna responsabilità per perdita di dati.
+    </div>
+
+    <!-- box privacy -->
+    <div style="background:#f0fff4;border-left:4px solid #28a745;border-radius:10px;padding:16px;margin-bottom:28px;font-size:14px;line-height:1.7;">
+      <strong>🔒 Privacy</strong><br>
+      Zero tracking · Analytics anonimi (Umami) · Zero pubblicità.<br>
+      I dati non escono mai dal tuo dispositivo.
+    </div>
+
+    <!-- link privacy -->
+    <p style="text-align:center;font-size:13px;color:#888;margin-bottom:20px;">
+      Continuando accetti i termini di utilizzo.<br>
+      <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);font-weight:700;text-decoration:none;">📄 Privacy Policy</a>
+      &nbsp;·&nbsp;
+      <a href="https://ristomemo.netlify.app/terms.html?leggi=true" target="_blank" style="color:var(--red);font-weight:700;text-decoration:none;">📋 Termini completi</a>
+    </p>
+
+    <!-- bottone -->
+    <button id="btnAccettaTermini" onclick="accettaTermini()" disabled
+      style="width:100%;padding:18px;background:#ccc;color:white;border:none;border-radius:16px;font-family:Nunito,sans-serif;font-weight:900;font-size:18px;cursor:not-allowed;transition:all 0.3s;letter-spacing:0.2px;">
+      ✅ Ho capito, inizia! <span id="termsCountdown">(5)</span>
+    </button>
+  </div>
+</div>
 
 <!-- NOTIFICA -->
 <div class="notif" id="notif"></div>
 
+<!-- WIZARD OVERLAY -->
+<div class="wizard-overlay hidden" id="wizardOverlay">
+  <div class="wizard-sheet">
+    <div class="wizard-pill"></div>
+    <div class="wizard-title">👋 Benvenuto in RistoMemo!</div>
+    <div class="wizard-sub">Salva i ristoranti dove mangi bene.<br>Ecco come appare una scheda:</div>
 
+    <div class="wizard-example-card">
+      <div class="wizard-example-badge">✨ Esempio</div>
+      <div class="wizard-example-name">🍽️ Osteria del Sole</div>
+      <div class="wizard-example-location">📍 Trastevere, Roma · ⭐⭐⭐⭐⭐</div>
+      <div class="card-tags" style="margin-bottom:10px;">
+        <span class="tag">🔥 Caminetto</span>
+        <span class="tag">🥩 Carne</span>
+        <span class="tag">🚗 Parcheggio</span>
+      </div>
+      <div class="wizard-example-note">"Cibo eccezionale, tortino al cioccolato da non perdere. Prenotare!"</div>
+    </div>
+
+    <div class="wizard-caption">
+      ↓ Tocca il pulsante per aggiungere<br>il <strong>tuo primo ristorante</strong>
+    </div>
+
+    <button class="btn-wizard-start" onclick="chiudiWizard()">
+      ➕ Aggiungi il mio primo ristorante
+    </button>
+    <button class="btn-wizard-dismiss" onclick="chiudiWizardSolo()">
+      Guarda prima come funziona →
+    </button>
+  </div>
+</div>
 
 <!-- SCROLL TO TOP -->
 <button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()" title="Torna su">↑</button>
@@ -115,10 +194,10 @@
   </div>
 
   <div class="form-group">
-    <label class="form-label">Città e Via * (es. Roma, Via Flaminia 10)</label>
+    <label class="form-label">Città / Via *</label>
     <input class="form-input" id="f-citta" type="text" placeholder="es. Roma, Via Flaminia 10">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;margin-bottom:6px;line-height:1.5;">📍 Più l'indirizzo è preciso, più la mappa nella scheda sarà accurata</div>
     <div class="campo-errore" id="err-citta">⚠️ Inserisci almeno la città</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:5px;margin-bottom:10px;line-height:1.5;">📍 Per visualizzare la mappa nella scheda, inserisci un indirizzo preciso (es. <em>Roma, Via Flaminia 10</em>)</div>
   </div>
 
   <div class="form-group">
@@ -211,7 +290,7 @@
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.19 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.14 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -285,7 +364,7 @@
   <div id="restaurantsList"></div>
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.19 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.14 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -346,20 +425,16 @@
       Se RistoMemo ti è utile,<br>puoi supportare volontariamente lo sviluppo.
     </p>
     <div style="background:#fff;border:2px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;">
-      <p style="font-size:13px;font-weight:700;margin-bottom:10px;">💳 Supporta tramite PayPal:</p>
-      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:8px;text-align:center;">enricosarri69@gmail.com</p>
-      <div style="text-align:center;margin-bottom:8px;">
-        <button onclick="navigator.clipboard.writeText('enricosarri69@gmail.com').then(function(){var b=document.getElementById('copied-paypal');b.style.opacity='1';setTimeout(function(){b.style.opacity='0'},2000)})" style="background:var(--red);color:white;border:none;border-radius:8px;padding:8px 18px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">📋 Copia email</button>
-        <div id="copied-paypal" style="font-size:12px;color:green;margin-top:4px;opacity:0;transition:opacity 0.3s;">Email copiata ✓</div>
-      </div>
-      <p style="font-size:12px;color:var(--muted);text-align:center;">(Invia tramite la tua app PayPal)</p>
+      <p style="font-size:13px;font-weight:700;margin-bottom:6px;">💳 Supporta tramite PayPal:</p>
+      <p style="font-size:14px;color:var(--red);font-weight:800;margin-bottom:4px;">📧 <a>help.enricosarri@gmail.com</a></p>
+      <p style="font-size:12px;color:var(--muted);">(Invia tramite la tua app PayPal)</p>
     </div>
     <p style="font-size:11px;color:var(--muted);">Totalmente facoltativo · Nessun vantaggio extra</p>
   </div>
 
   <!-- Copyright -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:8px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.19 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.14 · AGPL-3.0<br>
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy Policy</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/terms.html?leggi=true" target="_blank" style="color:var(--red);">📋 Termini di Utilizzo</a>
@@ -370,7 +445,7 @@
 <div class="content" id="tab-guida">
 
   <!-- STATISTICA COLLEZIONE -->
-  <div id="statCollezione" style="background:linear-gradient(135deg,var(--red),var(--red-dark));border-radius:14px;padding:16px 20px;margin-bottom:14px;color:white;">
+  <div id="statCollezione" style="background:linear-gradient(135deg,var(--red),var(--red-dark));border-radius:14px;padding:16px 20px;margin-bottom:14px;color:white;display:none;">
     <div style="font-size:13px;font-weight:800;opacity:0.9;margin-bottom:10px;">📊 La tua collezione</div>
     <div style="display:flex;gap:0;align-items:center;justify-content:space-around;">
       <div style="text-align:center;flex:1;">
@@ -388,7 +463,6 @@
         <div style="font-size:10px;font-weight:700;opacity:0.85;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;">preferiti</div>
       </div>
     </div>
-    <p style="font-size:11px;opacity:0.8;margin-top:10px;text-align:center;">Si aggiorna man mano che aggiungi ristoranti</p>
   </div>
 
   <!-- INTRO -->
@@ -400,56 +474,18 @@
     </p>
   </div>
 
-  <!-- INSTALLA -->
-  <div style="background:#f0faf4;border:2px solid #27ae60;border-radius:14px;padding:18px;margin-bottom:16px;">
-    <p style="font-weight:900;font-size:15px;color:#1e8449;margin:0 0 10px;">📲 Installa l'app sul telefono</p>
-    <p style="font-size:13px;line-height:1.7;color:#333;margin:0 0 12px;">
-      Aggiungila alla schermata Home per aprirla come un'app vera — funziona anche senza connessione, nessun app store richiesto.
-    </p>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-      <span style="background:#d5f0e0;color:#1e6e3e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;">🍎 iPhone: Safari → Condividi → Aggiungi a Home</span>
-      <span style="background:#d5f0e0;color:#1e6e3e;font-size:12px;font-weight:700;padding:4px 10px;border-radius:20px;">🤖 Android: Chrome → ⋮ → Installa app</span>
-    </div>
-    <a href="installa.html" target="_blank" style="display:block;background:linear-gradient(135deg,#27ae60,#1e8449);color:white;text-align:center;padding:12px;border-radius:10px;font-size:14px;font-weight:800;text-decoration:none;">
-      📲 Guida completa all'installazione →
-    </a>
-  </div>
-
-  <!-- CARD ESEMPIO -->
-  <div style="margin-bottom:16px;">
-    <p style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Esempio di scheda salvata</p>
-    <div style="border-radius:14px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.10);border:1px solid #f0e8e4;">
-      <div style="background:linear-gradient(135deg,#c0392b,#e74c3c);padding:14px 16px;">
-        <div style="font-size:16px;font-weight:800;color:#fff;">🍽️ Osteria del Sole</div>
-        <div style="font-size:18px;margin-top:4px;">⭐⭐⭐⭐⭐</div>
-      </div>
-      <div style="background:#fff;padding:12px 16px;font-size:13px;color:#444;">
-        <div style="margin-bottom:8px;">📍 Roma, Via della Lungaretta 25</div>
-        <div style="margin-bottom:8px;">📞 06 581 8355</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-          <span class="tag">🔥 Caminetto</span>
-          <span class="tag">🥩 Carne</span>
-          <span class="tag">🚗 Parcheggio</span>
-        </div>
-        <div style="font-style:italic;color:#666;">"Cibo eccezionale, tortino al cioccolato da non perdere. Prenotare!"</div>
-      </div>
-    </div>
-  </div>
-
   <!-- AGGIUNGERE -->
   <div style="background:#fff;border:2px solid #f0e8e4;border-radius:14px;padding:18px;margin-bottom:16px;">
     <p style="font-weight:800;font-size:14px;margin-bottom:10px;">➕ Come aggiungere un ristorante</p>
     <ol style="font-size:13px;line-height:1.9;color:#333;padding-left:18px;">
       <li>Vai nel tab <strong>Aggiungi</strong></li>
-      <li>Inserisci il <strong>nome</strong> <span style="color:var(--muted);">(obbligatorio)</span></li>
-      <li>Inserisci <strong>città e via</strong> <span style="color:var(--muted);">(obbligatorio — più è preciso, più la mappa sarà accurata)</span></li>
-      <li>Aggiungi il <strong>telefono</strong> <span style="color:var(--muted);">(facoltativo)</span></li>
-      <li>Tocca le <strong>etichette</strong> che descrivono il posto <span style="color:var(--muted);">(facoltativo)</span></li>
-      <li>Aggiungi il <strong>giorno di chiusura</strong> <span style="color:var(--muted);">(facoltativo)</span></li>
-      <li>Scrivi una <strong>nota</strong> <span style="color:var(--muted);">(facoltativo)</span></li>
+      <li>Inserisci il <strong>nome</strong> (obbligatorio)</li>
+      <li>Aggiungi <strong>città</strong> e <strong>stelle</strong> ⭐</li>
+      <li>Tocca le <strong>etichette</strong> che descrivono il posto</li>
+      <li>Aggiungi il <strong>giorno di chiusura</strong> se lo sai</li>
+      <li>Scrivi una <strong>nota</strong> se vuoi</li>
       <li>Tocca <strong>💾 Salva</strong></li>
     </ol>
-    <p style="font-size:13px;color:#444;margin-top:10px;">⭐ Le <strong>stelle</strong> si assegnano dopo il salvataggio: vai in <strong>Cerca</strong>, apri la scheda del ristorante e tocca le stelle.</p>
   </div>
 
   <!-- CERCA -->
@@ -522,17 +558,6 @@
     </ol>
     <div style="background:#fff8f5;border-radius:8px;padding:10px;font-size:12px;line-height:1.6;">
       💡 Funziona anche tra dispositivi diversi. I campi trasferiti sono: nome, città, stelle, note, etichette e telefono.
-    </div>
-  </div>
-
-  <!-- QR HEADER -->
-  <div style="background:#fff;border:2px solid #f0e8e4;border-radius:14px;padding:18px;margin-bottom:16px;">
-    <p style="font-weight:800;font-size:14px;margin-bottom:10px;">&#9700; Il QR code in alto a sinistra</p>
-    <div style="display:flex;align-items:flex-start;gap:12px;">
-      <span style="font-size:22px;flex-shrink:0;">&#128247;</span>
-      <p style="font-size:13px;line-height:1.7;color:#444;margin:0;">
-        Tocca il QR code nell'angolo in alto a sinistra per ingrandirlo. Fallo scansionare a un amico — lo porta direttamente alla pagina di installazione di RistoMemo. È il modo più rapido per consigliare l'app.
-      </p>
     </div>
   </div>
 
@@ -627,7 +652,7 @@
 
   <!-- Footer -->
   <div style="text-align:center;font-size:11px;color:var(--muted);padding:16px 8px 4px;line-height:1.8;">
-    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.19 · AGPL-3.0<br>
+    © 2025-2026 <strong>Enrico Sarri</strong> · RistoMemo v2.5.14 · AGPL-3.0<br>
     <a href="https://github.com/Henryx69/RistoMemo" target="_blank" style="color:var(--red);">⭐ GitHub</a>
     &nbsp;·&nbsp;
     <a href="https://ristomemo.netlify.app/privacy.html" target="_blank" style="color:var(--red);">🔒 Privacy</a>
@@ -645,9 +670,14 @@
       🍪 Nessun cookie di profilazione. I dati restano sul tuo dispositivo. Chiamate esterne: Netlify (hosting), Umami Analytics (statistiche anonime).
       <a href="https://ristomemo.netlify.app//privacy.html" target="_blank" style="color:#ff6b6b;font-weight:700;text-decoration:none;">Privacy Policy</a>
     </p>
-    <button onclick="chiudiCookieBanner()" style="background:var(--red);color:white;border:none;padding:8px 20px;border-radius:10px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">Ho capito</button>
+    <button onclick="chiudiCookieBanner()" style="background:var(--red);color:white;border:none;padding:8px 18px;border-radius:10px;font-family:Nunito,sans-serif;font-weight:800;font-size:13px;cursor:pointer;white-space:nowrap;flex-shrink:0;">
+      OK, capito
+    </button>
   </div>
 </div>
+
+<script src="app.js"></script>
+
 
 </body>
 </html>
