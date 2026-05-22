@@ -1193,6 +1193,11 @@ function showNotif(msg, type='success') {
 // ===================== INIT =====================
 window.addEventListener('DOMContentLoaded', () => {
 
+  // Early user flag — grandfather per futuro piano PRO
+  if (!localStorage.getItem('ristomemo_early_user')) {
+    localStorage.setItem('ristomemo_early_user', '1');
+  }
+
   // ---- MIGRAZIONE AUTOMATICA dal vecchio formato FREE ----
   // Controlla i dati esistenti in localStorage e li converte se sono vecchio formato
   (function migraLocalStorageSeNecessario() {
