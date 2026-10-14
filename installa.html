@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Installa RistoMemo</title>
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="512x512" href="salvaristo_icon512.png">
     <link rel="apple-touch-icon" href="salvaristo_icon512.png">
     <meta name="theme-color" content="#ff6b6b">
@@ -135,6 +136,14 @@
     </style>
 </head>
 <body>
+<script>
+  if (
+    (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) &&
+    localStorage.getItem('terminiAccettati')
+  ) {
+    window.location.replace('./index.html');
+  }
+</script>
     <div class="card">
 
         <div class="header">

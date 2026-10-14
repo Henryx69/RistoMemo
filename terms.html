@@ -120,14 +120,19 @@
             <div style="background: #e7f3ff; padding: 15px; border-radius: 8px; border-left: 4px solid #0066cc; margin-bottom: 15px;">
                 <p style="margin: 0; font-weight: 600; color: #004085;">
                     <strong>L'eventuale nullità di singole clausole non inficia la validità del resto del contratto.</strong>
-                    In caso di controversie si applicherà l'interpretazione più favorevole alla natura gratuita e hobbistica del servizio.
+                    Si applica la legge italiana. Per i consumatori resta fermo il foro previsto dalla legge.
                 </p>
             </div>
 
             <div style="background: #fff3cd; padding: 12px; border-radius: 8px; border-left: 4px solid #ffc107; margin-bottom: 20px;">
                 <p style="margin: 0; font-weight: 600; color: #856404;">
-                    <strong>GDPR Compliance:</strong> Nessun dato personale raccolto - tutto rimane sul tuo dispositivo.
-                    <strong>L'utente rinuncia esplicitamente a richiedere risarcimenti</strong> di qualsiasi natura.
+                    <strong>Privacy:</strong> l'autore non raccoglie né conserva dati personali sui propri server.
+                    I tuoi ristoranti restano sul tuo dispositivo.
+                    I fornitori tecnici (hosting, statistiche, mappe) possono trattare dati tecnici,
+                    come l'indirizzo IP, secondo le proprie informative.
+                    <strong>Responsabilità:</strong> nei limiti consentiti dalla legge, l'autore non risponde
+                    di perdite di dati, interruzioni del servizio o danni derivanti dall'uso dell'app.
+                    Restano ferme le responsabilità che la legge non permette di escludere.
                 </p>
             </div>
 
@@ -135,8 +140,8 @@
                 <h4>2. RESPONSABILITÀ UTENTE</h4>
                 <ul>
                     <li>L'utente utilizza l'app a proprio rischio per i contenuti inseriti</li>
-                    <li>Ogni recensione o commento è responsabilità esclusiva dell'utente</li>
-                    <li>Il creatore non è responsabile per recensioni o contenuti condivisi</li>
+                    <li>Ogni contenuto inserito o condiviso con altri (nomi, note, voti, telefoni) è responsabilità dell'utente</li>
+                    <li>L'autore non è responsabile dei contenuti che l'utente condivide o importa</li>
                     <li>Backup dei propri dati a cura dell'utente</li>
                     <li>Utilizzo consapevole e responsabile</li>
                 </ul>
@@ -145,8 +150,7 @@
             <div class="terms-section">
                 <h4>3. LIMITAZIONE RESPONSABILITÀ</h4>
                 <ul>
-                    <li>Non siamo responsabili per perdite di dati</li>
-                    <li>Non siamo responsabili per interruzioni del servizio</li>
+                    <li>Nei limiti consentiti dalla legge, l'autore non è responsabile per perdite di dati o per interruzioni del servizio</li>
                     <li>L'utente utilizza l'app a proprio rischio</li>
                 </ul>
             </div>
@@ -155,9 +159,11 @@
                 <h4>4. DATI E PRIVACY</h4>
                 <ul>
                     <li>Dati salvati solo localmente sul dispositivo</li>
-                    <li>Nessuna raccolta di dati personali identificabili</li>
+                    <li>L'autore non raccoglie dati personali sui propri server</li>
+                    <li>Hosting (Netlify): riceve dati tecnici di connessione, come l'indirizzo IP</li>
+                    <li>Fotocamera: usata solo per leggere un QR, le immagini non vengono registrate né inviate</li>
                     <li>Statistiche anonime di utilizzo tramite Umami Analytics (privacy-friendly, nessun cookie)</li>
-                    <li>Visualizzazione mappe tramite Google Maps — soggetta alla <a href="https://policies.google.com/privacy" target="_blank" style="color:#ff6b6b;">Privacy Policy di Google</a></li>
+                    <li>Visualizzazione mappe tramite Google Maps: si attiva solo quando tocchi “Mappa” e può usare cookie propri — soggetta alla <a href="https://policies.google.com/privacy" target="_blank" style="color:#ff6b6b;">Privacy Policy di Google</a></li>
                     <li>Per i dettagli completi consulta la <a href="privacy.html" style="color:#ff6b6b;">Privacy Policy</a></li>
                 </ul>
             </div>
@@ -175,33 +181,39 @@
                 <h4>6. COPYRIGHT E PROPRIETÀ INTELLETTUALE</h4>
                 <ul>
                     <li>© 2024-2026 Enrico Sarri. Licensed under AGPL-3.0</li>
-                    <li>Il design, il codice e la struttura sono protetti da copyright</li>
-                    <li>È vietata la riproduzione o distribuzione non autorizzata</li>
+                    <li>Il codice è rilasciato con licenza AGPL-3.0, che ne consente copia, modifica e distribuzione alle condizioni della licenza (tra cui indicare l'autore e rendere disponibile il codice delle versioni modificate)</li>
+                    <li>Il nome “RistoMemo” e il logo non sono concessi con la licenza: le versioni modificate non possono usarli senza permesso</li>
+                    <li>La versione ufficiale dell'app è disponibile solo su ristomemo.netlify.app</li>
+                    <li>L'autore non è responsabile di versioni modificate o distribuite da terzi</li>
                 </ul>
             </div>
 
             <div class="terms-footer">
-                <p><strong>⚠️ Continuando, accetti questi termini di utilizzo.</strong></p>
-                <p class="terms-date">Versione: 2026-03-25</p>
+                <p><strong>⚠️ Continuando, accetti questi termini di utilizzo e la <a href="privacy.html" style="color:#ff6b6b;">Privacy Policy</a>.</strong></p>
+                <p class="terms-date">Versione: 14/10/2026</p>
             </div>
 
         </div>
 
         <div class="terms-buttons" id="btnZone">
-            <button class="btn-accept" onclick="accetta()">✅ Ho letto e accetto i Termini</button>
+            <button class="btn-accept" onclick="accetta()">✅ Ho letto e accetto Termini e Privacy</button>
         </div>
 
     </div>
 
     <script>
+        // Deve essere uguale a TERMS_VERSION in app.js (formato aaaa-mm-gg) e corrispondere alla "Versione" scritta sopra (gg/mm/aaaa).
+        // Quando cambi Termini o Privacy, cambia questa data (in entrambi i file):
+        // chi ha già accettato li rivedrà una volta.
+        var TERMS_VERSION = '2026-10-14';
         var soloLettura = new URLSearchParams(window.location.search).get('leggi') === 'true';
 
-        if (!soloLettura && localStorage.getItem('terminiAccettati') === '1') {
+        if (!soloLettura && localStorage.getItem('terminiAccettati') === TERMS_VERSION) {
             window.location.replace('index.html');
         }
 
         function accetta() {
-            localStorage.setItem('terminiAccettati', '1');
+            localStorage.setItem('terminiAccettati', TERMS_VERSION);
             window.location.replace('index.html#guida');
         }
     </script>

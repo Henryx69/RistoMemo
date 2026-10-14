@@ -1,4 +1,11 @@
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,500;1,400&display=swap');
+  /* Font serviti dal sito stesso (nessuna chiamata a Google Fonts) */
+  @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 400; font-display: swap; src: url('fonts/nunito-latin-400-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 600; font-display: swap; src: url('fonts/nunito-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 700; font-display: swap; src: url('fonts/nunito-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 800; font-display: swap; src: url('fonts/nunito-latin-800-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Nunito'; font-style: normal; font-weight: 900; font-display: swap; src: url('fonts/nunito-latin-900-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Lora'; font-style: normal; font-weight: 500; font-display: swap; src: url('fonts/lora-latin-500-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Lora'; font-style: italic; font-weight: 400; font-display: swap; src: url('fonts/lora-latin-400-italic.woff2') format('woff2'); }
 
   :root {
     --red: #ff6b6b;

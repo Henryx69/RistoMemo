@@ -2,12 +2,152 @@
 const ESEMPIO_ID = '__esempio__';
 const STORAGE_KEY = 'myRestaurants';
 
+// ===================== AUTO-ESCLUSIONE SVILUPPATORE =====================
+// Marca questo dispositivo come "sviluppatore" per NON contarti nei dati Umami.
+// Attivazione una-tantum tramite URL (basta aprirlo una volta su ogni tuo device):
+//   https://ristomemo.netlify.app/?sviluppatore=1   → questo dispositivo NON viene tracciato
+//   https://ristomemo.netlify.app/?sviluppatore=0   → riattiva il tracciamento
+// NB: il flag vive in localStorage; se cancelli i dati del browser va rifatto.
+(function gestisciFlagSviluppatore() {
+  try {
+    const p = new URLSearchParams(window.location.search).get('sviluppatore');
+    if (p === '1') localStorage.setItem('sono_sviluppatore', 'si');
+    if (p === '0') localStorage.removeItem('sono_sviluppatore');
+  } catch (e) {}
+})();
+function _sonoSviluppatore() {
+  try { return localStorage.getItem('sono_sviluppatore') === 'si'; }
+  catch (e) { return false; }
+}
+
 function getRestaurants() {
   try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
   catch(e) { return []; }
 }
 function saveRestaurants(arr) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+// ===================== SICUREZZA: TESTO SEMPRE "SOLO TESTO" =====================
+// Tutto ciò che arriva dall'utente o da fuori (backup, QR, file) è un DATO, mai codice.
+// esc() trasforma i caratteri speciali in modo che il browser li mostri come semplice testo.
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+const LIMITI = {
+  nome: 120, citta: 200, telefono: 40, note: 2000,
+  tag: 30, nTag: 20, maxRistoranti: 2000, maxFileBytes: 5 * 1024 * 1024
+};
+const GIORNI_VALIDI = ['Lunedì','Martedì','Mercoledì','Giovedì','Venerdì','Sabato','Domenica'];
+const ID_VALIDO = /^[A-Za-z0-9_.-]{1,40}$/;
+
+// Pulisce un testo: solo stringhe, niente caratteri di controllo, lunghezza massima.
+function _testo(v, max, ammettiACapo) {
+  if (typeof v !== 'string') {
+    if (typeof v === 'number' && isFinite(v)) v = String(v); else return '';
+  }
+  v = ammettiACapo
+    ? v.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    : v.replace(/[\u0000-\u001F\u007F]/g, ' ');
+  return v.trim().slice(0, max);
+}
+
+function _numeroOnull(v) {
+  const n = typeof v === 'string' ? parseFloat(v) : v;
+  return (typeof n === 'number' && isFinite(n)) ? n : null;
+}
+
+let _idCounter = 0;
+function _nuovoId() {
+  _idCounter++;
+  return Date.now() + _idCounter;
+}
+
+// Ritorna un ristorante "pulito" oppure null se non utilizzabile.
+// opz.conservativo = true: non scarta nulla per mancanza di nome (usato sui dati già salvati).
+function sanitizzaRistorante(raw, opz) {
+  opz = opz || {};
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+
+  let nome = _testo(raw.name, LIMITI.nome);
+  if (!nome) {
+    if (!opz.conservativo) return null;
+    nome = 'Senza nome';
+  }
+
+  // id: numero finito oppure stringa semplice; altrimenti se ne crea uno nuovo
+  let id = raw.id;
+  const idOk = (typeof id === 'number' && isFinite(id)) ||
+               (typeof id === 'string' && ID_VALIDO.test(id));
+  if (!idOk || (id === ESEMPIO_ID && !opz.conservativo)) id = _nuovoId();
+
+  let rating = parseInt(raw.rating, 10);
+  if (!isFinite(rating)) rating = 0;
+  rating = Math.max(0, Math.min(5, rating));
+
+  const tags = [];
+  if (Array.isArray(raw.tags)) {
+    raw.tags.forEach(t => {
+      const s = _testo(t, LIMITI.tag);
+      if (s && !tags.includes(s) && tags.length < LIMITI.nTag) tags.push(s);
+    });
+  }
+
+  const chiusura = [];
+  if (Array.isArray(raw.chiusura)) {
+    raw.chiusura.forEach(g => {
+      if (GIORNI_VALIDI.includes(g) && !chiusura.includes(g)) chiusura.push(g);
+    });
+  }
+
+  const out = {
+    id: id,
+    name: nome,
+    citta: _testo(raw.citta, LIMITI.citta),
+    telefono: _testo(raw.telefono, LIMITI.telefono),
+    rating: rating,
+    note: _testo(raw.note, LIMITI.note, true),
+    tags: tags,
+    chiusura: chiusura,
+    preferito: raw.preferito === true
+  };
+  // campi facoltativi dei vecchi formati: tenuti solo se sono testo/numero valido
+  ['regione', 'indirizzo', 'cucina'].forEach(k => {
+    const s = _testo(raw[k], LIMITI.citta);
+    if (s) out[k] = s;
+  });
+  const lat = _numeroOnull(raw._lat), lng = _numeroOnull(raw._lng);
+  if (lat !== null && lng !== null && Math.abs(lat) <= 90 && Math.abs(lng) <= 180) {
+    out._lat = lat; out._lng = lng;
+  }
+  return out;
+}
+
+// Pulisce un elenco intero. Ritorna { validi, scartati }. Gli id doppi vengono rigenerati.
+function sanitizzaElenco(lista, opz) {
+  const validi = [];
+  let scartati = 0;
+  const visti = new Set();
+  (Array.isArray(lista) ? lista : []).forEach(raw => {
+    if (validi.length >= LIMITI.maxRistoranti) { scartati++; return; }
+    const r = sanitizzaRistorante(raw, opz);
+    if (!r) { scartati++; return; }
+    if (visti.has(String(r.id))) r.id = _nuovoId();
+    visti.add(String(r.id));
+    validi.push(r);
+  });
+  return { validi: validi, scartati: scartati };
+}
+
+// Numero di telefono utilizzabile in un link "tel:" (solo cifre e +)
+function _telHref(t) {
+  return String(t || '').replace(/[^\d+]/g, '');
 }
 
 // ===================== WIZARD RIMOSSO =====================
@@ -177,15 +317,21 @@ function rimuoviTag(valore) {
 function renderTagsSelected() {
   const container = document.getElementById('tagsSelected');
   if (selectedTags.size === 0) { container.innerHTML = ''; return; }
-  container.innerHTML = [...selectedTags].map(t => `
-    <span class="tag-selected-chip">
-      ${t}
-      <button class="tag-remove" data-tag="${t.replace(/"/g,'&quot;')}" title="Rimuovi">✕</button>
-    </span>
-  `).join('');
-  // delegazione eventi per evitare bug con caratteri speciali nell'onclick
-  container.querySelectorAll('.tag-remove').forEach(btn => {
+  // Il testo viene inserito come testo (mai come codice) e il valore del tag
+  // viaggia in un attributo data-*, quindi qualsiasi carattere è sicuro.
+  container.innerHTML = '';
+  [...selectedTags].forEach(t => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-selected-chip';
+    chip.appendChild(document.createTextNode(t + ' '));
+    const btn = document.createElement('button');
+    btn.className = 'tag-remove';
+    btn.title = 'Rimuovi';
+    btn.textContent = '✕';
+    btn.dataset.tag = t;
     btn.addEventListener('click', () => rimuoviTag(btn.dataset.tag));
+    chip.appendChild(btn);
+    container.appendChild(chip);
   });
 }
 
@@ -445,8 +591,8 @@ function mostraModaleDuplicati(duplicati, nuovoRecord) {
 
   const lista = duplicati.map(d => `
     <div class="modal-dup-card">
-      <strong>🍽️ ${d.name}</strong>
-      <span>📍 ${d.citta || '—'} ${d.rating ? '· ' + '⭐'.repeat(parseInt(d.rating)) : ''}</span>
+      <strong>🍽️ ${esc(d.name)}</strong>
+      <span>📍 ${esc(d.citta || '—')} ${d.rating ? '· ' + '⭐'.repeat(Math.max(0, Math.min(5, parseInt(d.rating) || 0))) : ''}</span>
     </div>
   `).join('');
 
@@ -602,52 +748,54 @@ function aggiornaLista() {
   hdr.textContent = '';
 
   if (filtered.length === 0) {
-    list.innerHTML = `<div class="no-results">Nessun risultato${filtroPreferiti ? ' tra i preferiti' : ''}${giornoFiltroAttivo ? ' aperto ' + giornoFiltroAttivo : ''}${q ? ' per "' + q + '"' : ''}.</div>`;
+    list.innerHTML = `<div class="no-results">Nessun risultato${filtroPreferiti ? ' tra i preferiti' : ''}${giornoFiltroAttivo ? ' aperto ' + giornoFiltroAttivo : ''}${q ? ' per "' + esc(q) + '"' : ''}.</div>`;
     return;
   }
 
   list.innerHTML = filtered.map(r => {
     const isEsempio = r.id === ESEMPIO_ID;
-    const sid = String(r.id).replace(/'/g, "\\'");
+    // Tutto ciò che viene dai dati passa da esc(); le azioni usano data-* e non onclick inline
+    const sid = esc(r.id);
     const cuore = r.preferito ? '❤️' : '🤍';
     const stelle = `<div class="card-stars">${[1,2,3,4,5].map(n =>
-      `<button class="card-star-btn ${(r.rating||0) >= n ? 'on' : ''}" onclick="setRatingCard('${sid}',${n})" title="${n} stelle">⭐</button>`
+      `<button class="card-star-btn ${(r.rating||0) >= n ? 'on' : ''}" data-azione="stella" data-id="${sid}" data-n="${n}" title="${n} stelle">⭐</button>`
     ).join('')}</div>`;
-    const tags = (r.tags||[]).map(t => `<span class="tag clickable" onclick="cercaPerTag('${t.replace(/'/g,"\\'")}')">${t}</span>`).join('');
-    const chiusuraInfo = (r.chiusura||[]).length > 0
-      ? `<div style="font-size:12px;color:var(--muted);margin-top:6px;">🔒 Chiuso: ${r.chiusura.join(' · ')}</div>`
+    const tags = (r.tags||[]).map(t => `<span class="tag clickable" data-azione="tag" data-tag="${esc(t)}">${esc(t)}</span>`).join('');
+    const chiusuraTesto = (r.chiusura||[]).length > 0
+      ? '🔒 Chiuso: ' + r.chiusura.map(esc).join(' · ')
       : '';
+    const telHref = _telHref(r.telefono);
     const telInfo = r.telefono
-      ? `<a href="tel:${r.telefono}" style="display:inline-flex;align-items:center;gap:6px;background:#f0fff4;border:1.5px solid #28a745;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:#1a6b30;text-decoration:none;margin-top:6px;">📞 ${r.telefono}</a>`
-      : (!isEsempio ? `<div style="font-size:11px;color:#f39c12;font-weight:700;margin-top:6px;cursor:pointer;" onclick="modificaRistorante('${sid}')">📞 Telefono non inserito — tocca ✏️ per aggiungerlo</div>` : '');
+      ? `<a href="tel:${esc(telHref)}" style="display:inline-flex;align-items:center;gap:6px;background:#f0fff4;border:1.5px solid #28a745;border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;color:#1a6b30;text-decoration:none;margin-top:6px;">📞 ${esc(r.telefono)}</a>`
+      : (!isEsempio ? `<div style="font-size:11px;color:#f39c12;font-weight:700;margin-top:6px;cursor:pointer;" data-azione="modifica" data-id="${sid}">📞 Telefono non inserito — tocca ✏️ per aggiungerlo</div>` : '');
     return `
       <div class="restaurant-card ${isEsempio ? 'card-example' : ''}">
         ${isEsempio ? '<div class="example-badge">✨ Esempio</div>' : ''}
 
         <!-- HEADER COLORATO -->
         <div class="card-header-band">
-          <div class="card-name">${r.name}</div>
-          <div class="card-location">📍 ${r.citta || '—'}</div>
+          <div class="card-name">${esc(r.name)}</div>
+          <div class="card-location">📍 ${esc(r.citta || '—')}</div>
         </div>
 
         <!-- CORPO: stelle + tutte le icone a destra -->
         <div class="card-delete-row">
           ${stelle}
           <div class="card-actions">
-            ${!isEsempio ? `<button class="fav-btn" onclick="togglePreferito('${sid}')" title="Preferito">${cuore}</button>` : ''}
-            ${!isEsempio ? `<button class="action-btn" onclick="modificaRistorante('${sid}')" title="Modifica">✏️</button>` : ''}
-            ${!isEsempio ? `<button class="action-btn" onclick="condividiRistorante('${sid}')" title="Invia">↗️</button>` : ''}
-            <button class="action-btn delete" onclick="eliminaRistorante('${sid}')" title="Elimina">🗑️</button>
+            ${!isEsempio ? `<button class="fav-btn" data-azione="preferito" data-id="${sid}" title="Preferito">${cuore}</button>` : ''}
+            ${!isEsempio ? `<button class="action-btn" data-azione="modifica" data-id="${sid}" title="Modifica">✏️</button>` : ''}
+            ${!isEsempio ? `<button class="action-btn" data-azione="condividi" data-id="${sid}" title="Invia">↗️</button>` : ''}
+            <button class="action-btn delete" data-azione="elimina" data-id="${sid}" title="Elimina">🗑️</button>
           </div>
         </div>
         ${tags ? `<div class="card-tags">${tags}</div>` : ''}
         ${telInfo}
-        ${r.note ? `<div class="card-note">"${r.note}"</div>` : ''}
+        ${r.note ? `<div class="card-note">"${esc(r.note)}"</div>` : ''}
 
         <!-- FOOTER -->
         <div class="card-footer-band">
-          <span style="font-size:11px;color:var(--muted);font-style:italic;">${chiusuraInfo ? chiusuraInfo.replace(/<[^>]+>/g,'') : ''}</span>
-          ${!isEsempio && r.citta ? `<button class="btn-mappa" onclick="toggleMappa('${sid}', this)">🗺️ Mappa</button>` : '<span></span>'}
+          <span style="font-size:11px;color:var(--muted);font-style:italic;">${chiusuraTesto}</span>
+          ${!isEsempio && r.citta ? `<button class="btn-mappa" data-azione="mappa" data-id="${sid}">🗺️ Mappa</button>` : '<span></span>'}
         </div>
         ${!isEsempio && r.citta ? `
         <div class="card-map-wrap" id="map-${sid}">
@@ -661,6 +809,32 @@ function aggiornaLista() {
     `;
   }).join('');
 }
+
+// ===================== AZIONI DELLE SCHEDE E DEI POPUP (un solo ascoltatore) =====================
+// Le schede e i popup non usano più onclick="..." con dati dentro: ogni bottone porta
+// data-azione + data-id, e qui sotto un solo ascoltatore lo smista alla funzione giusta.
+document.addEventListener('click', function (e) {
+  const el = e.target.closest && e.target.closest('[data-azione]');
+  if (!el) return;
+  const id = el.dataset.id;
+  switch (el.dataset.azione) {
+    case 'stella':       setRatingCard(id, parseInt(el.dataset.n, 10)); break;
+    case 'tag':          cercaPerTag(el.dataset.tag); break;
+    case 'modifica':     modificaRistorante(id); break;
+    case 'preferito':    togglePreferito(id); break;
+    case 'condividi':    condividiRistorante(id); break;
+    case 'elimina':      eliminaRistorante(id); break;
+    case 'mappa':        toggleMappa(id, el); break;
+    case 'condividi-testo': condividiTesto(id); break;
+    case 'esporta-json': esportaJSON(id); break;
+    case 'mostra-qr':    mostraQR(id); break;
+    case 'chiudi':       document.getElementById(el.dataset.target)?.remove(); break;
+    case 'conferma-elimina': chiudiModaleElimina(); eseguiEliminazione(id); break;
+    case 'annulla-elimina':  chiudiModaleElimina(); break;
+    case 'conferma-ripristino': confermaRipristino(); break;
+    case 'annulla-ripristino':  chiudiModaleRipristino(); break;
+  }
+});
 
 
 function aggiornaStatCollezione() {
@@ -727,18 +901,17 @@ function consigliaApp() {
 function condividiRistorante(id) {
   const r = getRestaurants().find(x => String(x.id) === String(id));
   if (!r) return;
-  const nomeEsc = r.name.replace(/'/g, "\\'");
   const overlay = document.createElement('div');
   overlay.id = 'modalCondividi';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:16px;padding:24px;max-width:340px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
       <p style="font-weight:800;font-size:16px;margin-bottom:4px;">↗️ Condividi ristorante</p>
-      <p style="font-size:13px;color:#666;margin-bottom:18px;">🍽️ <strong>${r.name}</strong></p>
-      <button onclick="condividiTesto('${id}')" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">📤 Condividi come testo</button>
-      <button onclick="esportaJSON('${id}')" style="width:100%;padding:12px;background:#6c757d;color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">📦 Esporta file JSON</button>
-      <button onclick="mostraQR('${id}')" style="width:100%;padding:12px;background:#0066cc;color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:16px;">📷 Mostra QR Code</button>
-      <button onclick="document.getElementById('modalCondividi').remove()" style="width:100%;padding:10px;background:#f8f9fa;color:#333;border:2px solid #dee2e6;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✕ Annulla</button>
+      <p style="font-size:13px;color:#666;margin-bottom:18px;">🍽️ <strong>${esc(r.name)}</strong></p>
+      <button data-azione="condividi-testo" data-id="${esc(r.id)}" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">📤 Condividi come testo</button>
+      <button data-azione="esporta-json" data-id="${esc(r.id)}" style="width:100%;padding:12px;background:#6c757d;color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:8px;">📦 Esporta file JSON</button>
+      <button data-azione="mostra-qr" data-id="${esc(r.id)}" style="width:100%;padding:12px;background:#0066cc;color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:16px;">📷 Mostra QR Code</button>
+      <button data-azione="chiudi" data-target="modalCondividi" style="width:100%;padding:10px;background:#f8f9fa;color:#333;border:2px solid #dee2e6;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✕ Annulla</button>
     </div>`;
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
@@ -782,14 +955,36 @@ function esportaJSON(id) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `ristomemo_${r.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase()}.json`;
+  a.download = `ristomemo_${r.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase() || 'ristorante'}.json`;
   a.click();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
   showNotif('📦 File JSON scaricato!', 'success');
 }
 
+// ===================== QR GENERATI NELL'APP =====================
+// Il QR si disegna qui, con la libreria nel sito (lib/qrcode.min.js): nessuna richiesta
+// a siti esterni e funziona anche senza rete. Ritorna un SVG pronto, oppure '' se fallisce.
+function qrSvg(testo, ecc, margine) {
+  try {
+    if (typeof qrcode !== 'function') return '';
+    const q = qrcode(0, ecc || 'L');
+    q.addData(String(testo));
+    q.make();
+    return q.createSvgTag({ cellSize: 4, margin: margine == null ? 16 : margine, scalable: true });
+  } catch (e) {
+    return '';
+  }
+}
+
+const URL_APP = 'https://ristomemo.netlify.app/installa.html';
+
+function disegnaQRIntestazione() {
+  const el = document.getElementById('headerQR');
+  if (el) el.innerHTML = qrSvg(URL_APP, 'L', 0);
+}
+
 function mostraQRApp() {
-  const url = 'https://ristomemo.netlify.app/installa.html';
+  const url = URL_APP;
   const overlay = document.createElement('div');
   overlay.id = 'modalQRApp';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
@@ -797,7 +992,7 @@ function mostraQRApp() {
     <div style="background:#fff;border-radius:16px;padding:24px;max-width:300px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
       <p style="font-weight:900;font-size:17px;margin-bottom:4px;">🍽️ RistoMemo</p>
       <p style="font-size:12px;color:#666;margin-bottom:16px;">Scansiona per installare l'app gratis</p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=240x240&ecc=M&data=${encodeURIComponent(url)}" width="240" height="240" style="border-radius:8px;margin-bottom:16px;" alt="QR RistoMemo">
+      <div role="img" aria-label="QR RistoMemo" style="width:240px;height:240px;margin:0 auto 16px;border-radius:8px;background:#fff;">${qrSvg(url, 'M') || '<p style="font-size:12px;color:#c0392b;padding-top:100px;">QR non disponibile</p>'}</div>
       <p style="font-size:11px;color:#888;margin-bottom:16px;">Gratuita · Offline · Nessun account</p>
       <button onclick="document.getElementById('modalQRApp').remove()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;border:none;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✕ Chiudi</button>
     </div>`;
@@ -826,14 +1021,16 @@ const payload = JSON.stringify({
   overlay.innerHTML = `
     <div style="background:#fff;border-radius:16px;padding:24px;max-width:320px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2);">
       <p style="font-weight:800;font-size:16px;margin-bottom:4px;">📷 QR Code</p>
-      <p style="font-size:13px;color:#666;margin-bottom:16px;">🍽️ <strong>${r.name}</strong></p>
-      <img id="qrImg" style="width:220px;height:220px;margin-bottom:16px;border-radius:8px;" alt="QR Code">
+      <p style="font-size:13px;color:#666;margin-bottom:16px;">🍽️ <strong>${esc(r.name)}</strong></p>
+      <div id="qrImg" role="img" aria-label="QR Code" style="width:220px;height:220px;margin:0 auto 16px;border-radius:8px;background:#fff;"></div>
       <p style="font-size:11px;color:#888;margin-bottom:16px;">Fai uno screenshot e fallo scansionare per importare il ristorante in RistoMemo</p>
-      <button onclick="document.getElementById('modalQR').remove()" style="width:100%;padding:10px;background:#f8f9fa;color:#333;border:2px solid #dee2e6;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✕ Chiudi</button>
+      <button data-azione="chiudi" data-target="modalQR" style="width:100%;padding:10px;background:#f8f9fa;color:#333;border:2px solid #dee2e6;border-radius:10px;font-family:Nunito,sans-serif;font-weight:700;font-size:13px;cursor:pointer;">✕ Chiudi</button>
     </div>`;
   document.body.appendChild(overlay);
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-  document.getElementById('qrImg').src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&ecc=L&data=' + encodeURIComponent(payload);
+  const svg = qrSvg(payload, 'L');
+  document.getElementById('qrImg').innerHTML = svg ||
+    '<p style="font-size:12px;color:#c0392b;padding-top:90px;">QR non disponibile: i dati sono troppo lunghi</p>';
 }
 
 function importaQR() {
@@ -866,7 +1063,7 @@ function importaQR() {
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0);
         const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(img.data, img.width, img.height);
+        const code = (typeof jsQR === 'function') ? jsQR(img.data, img.width, img.height) : null;
         if (code) {
           try {
             const payload = JSON.parse(code.data);
@@ -900,24 +1097,34 @@ function stopImportaQR() {
 
 function elaboraRistoranteImportato(raw) {
   // Supporta sia formato compatto {t,n,c,r,o,g} che formato esteso {ristorante:{...}}
-
-const r = raw.t === 'rm1' ? {
+  // Il contenuto arriva da fuori: viene SEMPRE ripulito prima di essere salvato.
+  if (!raw || typeof raw !== 'object') {
+    showNotif('⚠️ Dati del ristorante non validi', 'error');
+    return;
+  }
+  const grezzo = raw.t === 'rm1' ? {
     name: raw.n, citta: raw.c||'', rating: raw.r||0,
     note: raw.o||'', tags: raw.g||[], chiusura: [], telefono: raw.p||''
   } : raw;
 
+  const r = sanitizzaRistorante(grezzo);
+  if (!r) {
+    showNotif('⚠️ Ristorante non valido: manca il nome', 'error');
+    return;
+  }
+
   const arr = getRestaurants();
   const dup = arr.find(x =>
-    x.name?.toLowerCase() === r.name?.toLowerCase() &&
-    (x.citta?.toLowerCase() === r.citta?.toLowerCase() || (!x.citta && !r.citta))
+    x.name?.toLowerCase() === r.name.toLowerCase() &&
+    (x.citta?.toLowerCase() === r.citta.toLowerCase() || (!x.citta && !r.citta))
   );
   if (dup) { showNotif('⚠️ Ristorante già presente nella collezione', 'error'); return; }
-  r.id = Date.now();
+  r.id = _nuovoId();
   arr.push(r);
-
 
   saveRestaurants(arr);
   aggiornaLista();
+  aggiornaStatCollezione();
   showNotif(`✅ "${r.name}" importato!`, 'success');
   showTab('cerca', document.querySelector('[data-tab="cerca"]'));
 }
@@ -933,6 +1140,34 @@ function setRatingCard(id, valore) {
 }
 
 function eliminaRistorante(id) {
+  const r = getRestaurants().find(x => String(x.id) === String(id));
+  const nome = r ? r.name : 'questa scheda';
+  const existing = document.getElementById('modaleElimina');
+  if (existing) existing.remove();
+  const html = `
+    <div class="modal-overlay" id="modaleElimina">
+      <div class="modal-box">
+        <div class="modal-header" style="background:linear-gradient(135deg,var(--red),var(--red-dark));">🗑️ Conferma eliminazione</div>
+        <div class="modal-body">
+          <p>Stai per eliminare <strong style="color:var(--text);">${esc(nome)}</strong>.</p>
+          <p>L'operazione non è reversibile. Vuoi procedere?</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" data-azione="annulla-elimina">✕ Annulla</button>
+          <button class="modal-btn modal-btn-save" data-azione="conferma-elimina" data-id="${esc(id)}">🗑️ Elimina</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function chiudiModaleElimina() {
+  const m = document.getElementById('modaleElimina');
+  if (m) m.remove();
+}
+
+function eseguiEliminazione(id) {
   const arr = getRestaurants().filter(r => String(r.id) !== String(id));
   saveRestaurants(arr);
   aggiornaLista();
@@ -940,8 +1175,13 @@ function eliminaRistorante(id) {
 }
 
 // ===================== TERMINI =====================
+// Versione dei Termini e della Privacy: deve essere uguale a TERMS_VERSION in terms.html.
+// Quando cambi i Termini o la Privacy, cambia questa data in entrambi i file:
+// chi ha già accettato rivedrà la pagina dei Termini una volta.
+const TERMS_VERSION = '2026-10-14';
+
 function mostraTerminiSeNecessario() {
-  if (!localStorage.getItem('terminiAccettati')) {
+  if (localStorage.getItem('terminiAccettati') !== TERMS_VERSION) {
     window.location.replace('terms.html');
   }
 }
@@ -1111,19 +1351,20 @@ function migraVecchioFormato(arr) {
     // Se ha già il formato nuovo (ha tags array) — non toccare
     if (Array.isArray(r.tags) && !r.ambiente) return r;
 
-    const tags = new Set(r.tags || []);
-    (r.ambiente  || []).forEach(v => { const t = mapAmbiente[v];  if (t) tags.add(t); });
-    (r.tipologia || []).forEach(v => { const t = mapTipologia[v]; if (t) tags.add(t); });
-    (r.servizi   || []).forEach(v => { const t = mapServizi[v];   if (t) tags.add(t); });
-    if (r.cucina) { const t = mapCucina[r.cucina]; if (t) tags.add(t); }
+    const _a = v => Array.isArray(v) ? v : [];
+    const tags = new Set(_a(r.tags));
+    _a(r.ambiente).forEach(v => { const t = mapAmbiente[v];  if (t) tags.add(t); });
+    _a(r.tipologia).forEach(v => { const t = mapTipologia[v]; if (t) tags.add(t); });
+    _a(r.servizi).forEach(v => { const t = mapServizi[v];   if (t) tags.add(t); });
+    if (typeof r.cucina === 'string' && Object.prototype.hasOwnProperty.call(mapCucina, r.cucina)) { const t = mapCucina[r.cucina]; if (t) tags.add(t); }
 
     // Giorni aperti → giorni chiusi
-    const giorniAperti = r.giorni || [];
-    const chiusura = r.chiusura || TUTTI_GIORNI.filter(g => !giorniAperti.includes(g));
+    const giorniAperti = _a(r.giorni);
+    const chiusura = Array.isArray(r.chiusura) ? r.chiusura : TUTTI_GIORNI.filter(g => !giorniAperti.includes(g));
 
     // Note + chiusure testuali
-    let note = (r.note || r.notes || '').trim();
-    if (r.chiusure && r.chiusure.trim()) {
+    let note = String(r.note || r.notes || '').trim();
+    if (typeof r.chiusure === 'string' && r.chiusure.trim()) {
       note = note ? note + '\n⚠️ ' + r.chiusure.trim() : '⚠️ ' + r.chiusure.trim();
     }
 
@@ -1145,38 +1386,104 @@ function migraVecchioFormato(arr) {
   });
 }
 
+// File di ripristino in attesa di conferma (già ripulito)
+let _ripristinoInAttesa = null;
+
 function importaBackup(e) {
-  const file = e.target.files[0];
+  const input = e.target;
+  const file = input.files && input.files[0];
   if (!file) return;
+  if (file.size > LIMITI.maxFileBytes) {
+    showNotif('❌ File troppo grande per essere un backup', 'error');
+    input.value = '';
+    return;
+  }
   const fr = new FileReader();
   fr.onload = ev => {
+    input.value = ''; // permette di scegliere di nuovo lo stesso file
     try {
       const parsed = JSON.parse(ev.target.result);
 
+      // File di un SINGOLO ristorante (come da Guida): si aggiunge, non sostituisce
+      if (parsed && !Array.isArray(parsed) && parsed.tipo === 'ristomemo_singolo' && parsed.ristorante) {
+        elaboraRistoranteImportato(parsed.ristorante);
+        return;
+      }
+
       // Gestisce formato array diretto [...] e formato annidato {version, data:[...]}
-      let data = Array.isArray(parsed) ? parsed : (parsed.data || null);
+      let data = Array.isArray(parsed) ? parsed : (parsed && parsed.data) || null;
 
       if (!data || !Array.isArray(data)) {
         showNotif('❌ File non valido o formato non riconosciuto', 'error');
         return;
       }
 
-      // Migrazione automatica se contiene campi vecchi (ambiente, tipologia, ecc.)
+      // Si lavora solo su oggetti veri; il resto viene saltato dal controllo successivo
+      const nTotale = data.length;
+      data = data.filter(r => r && typeof r === 'object' && !Array.isArray(r));
       data = data.map(r => ({ ...r, _lat: r._lat || r.lat || null, _lng: r._lng || r.lon || r.lng || null }));
-      const haFormatoVecchio = data.some(r => r.ambiente || r.tipologia || r.notes);
-      if (haFormatoVecchio) {
-        data = migraVecchioFormato(data);
-        showNotif('✅ Importati e convertiti: ' + data.length + ' ristoranti', 'success');
-      } else {
-        showNotif('✅ Importati: ' + data.length + ' ristoranti', 'success');
-      }
 
-      saveRestaurants(data);
+      // Migrazione automatica se contiene campi vecchi (ambiente, tipologia, ecc.)
+      const haFormatoVecchio = data.some(r => r.ambiente || r.tipologia || r.notes);
+      if (haFormatoVecchio) data = migraVecchioFormato(data);
+
+      const pulito = sanitizzaElenco(data);
+      const scartati = pulito.scartati + (nTotale - data.length);
+      if (pulito.validi.length === 0) {
+        showNotif('❌ Nessun ristorante valido nel file', 'error');
+        return;
+      }
+      mostraModaleRipristino(pulito.validi, scartati);
     } catch(err) {
       showNotif('❌ File non valido', 'error');
     }
   };
+  fr.onerror = () => { input.value = ''; showNotif('❌ Impossibile leggere il file', 'error'); };
   fr.readAsText(file);
+}
+
+function mostraModaleRipristino(validi, scartati) {
+  chiudiModaleRipristino();
+  _ripristinoInAttesa = validi;
+  const attuali = getRestaurants().filter(r => r.id !== ESEMPIO_ID).length;
+  const plur = (n, s, p) => n + ' ' + (n === 1 ? s : p);
+  const html = `
+    <div class="modal-overlay" id="modaleRipristino">
+      <div class="modal-box">
+        <div class="modal-header">⚠️ Sostituire i tuoi ristoranti?</div>
+        <div class="modal-body">
+          <p>Nell'app ci sono <strong>${attuali}</strong> ${attuali === 1 ? 'ristorante' : 'ristoranti'}.</p>
+          <p>
+            Il file ne contiene <strong>${validi.length}</strong> validi.
+            ${scartati > 0 ? `<br><span style="font-size:12px;color:#888;">${plur(scartati, 'voce rovinata verrà saltata', 'voci rovinate verranno saltate')}.</span>` : ''}
+          </p>
+          <p>Se continui, quelli attuali verranno sostituiti.</p>
+        </div>
+        <div class="modal-buttons">
+          <button class="modal-btn modal-btn-cancel" data-azione="annulla-ripristino">✕ Annulla</button>
+          <button class="modal-btn modal-btn-save" data-azione="conferma-ripristino">⬆️ Sostituisci</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function chiudiModaleRipristino() {
+  document.getElementById('modaleRipristino')?.remove();
+  _ripristinoInAttesa = null;
+}
+
+function confermaRipristino() {
+  const validi = _ripristinoInAttesa;
+  document.getElementById('modaleRipristino')?.remove();
+  _ripristinoInAttesa = null;
+  if (!validi || validi.length === 0) return;
+  saveRestaurants(validi);
+  aggiornaLista();
+  aggiornaStatistiche();
+  aggiornaStatCollezione();
+  showNotif('✅ Ripristinati: ' + validi.length + (validi.length === 1 ? ' ristorante' : ' ristoranti'), 'success');
 }
 
 // ===================== NOTIFICA =====================
@@ -1234,6 +1541,29 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   })();
 
+  // ---- RIPULITURA DI SICUREZZA (una volta all'avvio) ----
+  // Ricontrolla i ristoranti già salvati: se qualche campo non è nella forma prevista
+  // (es. arrivato da un vecchio backup), lo riporta a una forma sicura.
+  // Prima di cambiare qualcosa, conserva una copia dei dati originali.
+  (function ripulisciDatiSalvati() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return;
+      const pulito = sanitizzaElenco(arr.map(r => (r && typeof r === 'object' && !Array.isArray(r)) ? r : null), { conservativo: true });
+      const nuovo = JSON.stringify(pulito.validi);
+      // Record non-oggetto vengono tolti (scartati > 0); il resto viene solo normalizzato
+      if (nuovo !== JSON.stringify(arr)) {
+        try { localStorage.setItem(STORAGE_KEY + '_prima_pulizia', raw); } catch (e) {}
+        localStorage.setItem(STORAGE_KEY, nuovo);
+        console.log('[RistoMemo] Dati salvati ricontrollati e sistemati:', pulito.validi.length, 'ristoranti');
+      }
+    } catch (e) {
+      console.warn('[RistoMemo] Controllo dati salvati non riuscito:', e);
+    }
+  })();
+
   // Tab buttons via addEventListener — più robusto degli onclick inline
   document.getElementById('tab-btn-guida').addEventListener('click', function() { showTab('guida', this); });
   document.getElementById('tab-btn-aggiungi').addEventListener('click', function() { showTab('aggiungi', this); });
@@ -1257,6 +1587,7 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   aggiornaProgress(); // stato iniziale
+  disegnaQRIntestazione();
 
   aggiornaLista();
  aggiornaInfoBackup();
@@ -1310,6 +1641,7 @@ window.addEventListener('DOMContentLoaded', () => {
 })();
 
 function mostraNotificaAggiornamento(newWorker) {
+  window._pendingWorker = newWorker; // serve al bottone "Aggiorna"
   // Rimuovi eventuale notifica precedente
   const existing = document.getElementById('updateBanner');
   if (existing) existing.remove();
@@ -1326,7 +1658,55 @@ function mostraNotificaAggiornamento(newWorker) {
 }
 
 function aggiornaApp() {
-  if (window._pendingWorker) {
-    window._pendingWorker.postMessage({ action: 'skipWaiting' });
+  // Chiede al nuovo service worker di attivarsi (con entrambi i messaggi che conosce)
+  const w = window._pendingWorker;
+  if (w) {
+    try {
+      w.postMessage({ type: 'SKIP_WAITING' });
+      w.postMessage({ action: 'skipWaiting' });
+    } catch (e) {}
   }
+  // Il service worker si attiva da solo e ricarica la pagina; per sicurezza,
+  // se entro mezzo secondo non è successo nulla, ricarica comunque.
+  document.getElementById('updateBanner')?.remove();
+  setTimeout(() => window.location.reload(), 500);
 }
+
+// ===================== TRACCIAMENTO PWA (Umami) =====================
+// Aggiunto per capire quanti utenti installano e riaprono RistoMemo
+// come app installata, oltre alle semplici visite alla pagina.
+
+// Invia un evento a Umami solo se lo script è pronto.
+function _tracciaUmami(nome) {
+  // Se questo dispositivo è marcato come sviluppatore, non traccio nulla.
+  // Ritorno true così l'eventuale ciclo di retry si ferma subito.
+  if (_sonoSviluppatore()) return true;
+  if (window.umami && typeof window.umami.track === 'function') {
+    window.umami.track(nome);
+    return true;
+  }
+  return false;
+}
+
+// 1) Momento dell'installazione (Android / Chrome / Edge desktop).
+//    NB: su iPhone questo evento NON esiste (Apple non lo lancia).
+window.addEventListener('appinstalled', function () {
+  _tracciaUmami('pwa-installata');
+});
+
+// 2) App aperta come installata (funziona anche su iPhone).
+//    È il dato più utile: misura chi USA davvero l'app, non solo chi passa.
+window.addEventListener('load', function () {
+  var installata =
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    window.navigator.standalone === true;
+  if (!installata) return;
+
+  // Umami è asincrono: riprovo per ~5 secondi finché non è pronto.
+  var tentativi = 0;
+  var attesa = setInterval(function () {
+    if (_tracciaUmami('pwa-aperta-installata') || ++tentativi > 20) {
+      clearInterval(attesa);
+    }
+  }, 250);
+});

@@ -1,0 +1,11 @@
+# RistoMemo - regole di sicurezza inviate da Netlify a ogni pagina
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev; frame-src https://maps.google.com https://www.google.com; media-src 'self' blob:; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), microphone=(), geolocation=(), payment=()
+  X-Frame-Options: DENY
+
+# Il service worker non deve restare in cache: così gli aggiornamenti arrivano subito
+/service-worker.js
+  Cache-Control: no-cache

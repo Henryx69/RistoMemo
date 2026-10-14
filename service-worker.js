@@ -1,11 +1,11 @@
 // ==========================================
-// RistoMemo FREE - Service Worker v2.5.19
+// RistoMemo FREE - Service Worker v2.5.24
 // © 2026 Enrico Sarri - AGPL-3.0
 // Strategia: Network-first con fallback offline
 // Aggiornamento automatico senza toccare CACHE_NAME
 // ==========================================
 
-const CACHE_NAME = 'ristomemo-free-v2.5.19';
+const CACHE_NAME = 'ristomemo-free-v2.5.24';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -13,7 +13,18 @@ const ASSETS_TO_CACHE = [
   './manifest.json',
   './salvaristo_icon512.png',
   './privacy.html',
-  './terms.html'
+  './terms.html',
+  './style.css',
+  './app.js',
+  './lib/qrcode.min.js',
+  './lib/jsQR.min.js',
+  './fonts/nunito-latin-400-normal.woff2',
+  './fonts/nunito-latin-600-normal.woff2',
+  './fonts/nunito-latin-700-normal.woff2',
+  './fonts/nunito-latin-800-normal.woff2',
+  './fonts/nunito-latin-900-normal.woff2',
+  './fonts/lora-latin-500-normal.woff2',
+  './fonts/lora-latin-400-italic.woff2'
 ];
 
 // ---- INSTALL: pre-cache assets essenziali ----
